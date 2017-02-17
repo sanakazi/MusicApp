@@ -1,0 +1,54 @@
+<!--
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item>
+        <shape android:shape="rectangle" >
+            <corners android:radius="5dp"/>
+
+            <gradient
+                android:angle="90"
+                android:endColor="@color/seek_bar_light"
+                android:startColor="@color/seek_bar_light" />
+        </shape>
+    </item>
+    <item>
+        <clip>
+            <shape android:shape="rectangle" >
+                <corners android:radius="5dp" />
+
+                <gradient
+                    android:angle="90"
+                    android:endColor="@color/seek_bar_dark"
+                    android:startColor="#303F9F" />
+            </shape>
+        </clip>
+    </item>
+
+</layer-list>-->
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@android:id/background"
+        android:drawable="@drawable/video_seekbar_bg"/>
+
+    <item android:id="@android:id/secondaryProgress">
+    <clip android:drawable="@drawable/custome_secondary_progress">
+        <!--<shape>
+            <corners android:radius="1dip" />
+            <gradient
+                android:startColor="@android:color/darker_gray"
+                android:centerColor="@android:color/darker_gray"
+                android:centerY="0.75"
+                android:endColor="@android:color/darker_gray"
+                android:angle="270"
+                />
+        </shape>-->
+    </clip>
+</item>
+
+    <item android:id="@android:id/progress">
+        <clip android:drawable="@drawable/video_seekbar_progress" />
+    </item>
+
+</layer-list>

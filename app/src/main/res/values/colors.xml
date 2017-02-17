@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorAccent">#FF4081</color>
+    <color name="white">#ffffff</color>
+    <color name="Transparent">#00000000</color>
+    <color name="black">#000000</color>
+    <color name="purple">#6c1969</color>840c7d
+    <color name="light_purple">#840c7d</color>
+    <color name="blue">#01244A</color>840c7d
+    <color name="light_blue">#01386E</color>
+
+
+    <!--signup color-->
+    <color name="loginbtn_color">#471C6B</color>
+    <color name="signup_txt_white">#80B7B4</color>
+
+    <!--login color-->
+    <color name="login_txt">#C6859D</color>
+    <!--  Home screen -->
+    <color name="home_icons_yellow">#ffb119</color>
+    <color name="music_bar_progress">#e57100</color>
+    <color name="tab_bg">#343434</color>
+    <color name="home_fragment_bg">#1c1c1c</color>
+    <color name="header_bg_start">#d74701</color>
+    <color name="header_bg_end">#e87f03</color>
+    <!--  home artist details screen -->
+    <color name="latest_release_bg">#222222</color>
+    <color name="latest_release_song_details">#808285</color>
+
+
+    <!--  Browse screen -->
+    <color name="text_color_find">#949494</color>
+    <color name="search_btn_bg_start">#E16E35</color>
+    <color name="search_btn_bg_end">#EC9335</color>
+    <color name="search_section">#222222</color>
+    <color name="search_seperator">#333333</color>
+
+
+    <!--  VideoPalyer screen -->
+    <color name="seek_bar_dark">#1881A9</color>
+    <color name="seek_bar_light">#224A71</color>
+
+    <!--  reset password screen -->
+    <color name="light_blue_bg">#1E4B9E</color>
+    <color name="dark_blue_bg">#281566</color>
+    <color name="hint_color">#8091BD</color>
+    <color name="hint_color_reset">#D5829E</color>
+
+
+
+    <!--  VideoPalyer screen -->
+    <!-- <color name="seek_bar_dark">#1881A9</color>
+     <color name="seek_bar_light">#224A71</color>-->
+    <color name="video_seek_bar_dark">#02A1C8</color>
+    <color name="video_seek_bar_light">#1D5C7D</color>
+    <!--  AudioPlayer screen -->
+    <color name="arcseek_bar_dark">#DC28CF</color>
+    <color name="arcseek_bar_light">#8A4193</color>
+
+
+
+
+    <!--  Background view for audio player -->
+    <color name="background_black">#141414</color>
+    <color name="background_black_light">#5E5E5E</color>
+    <color name="background_dark_yellow">#EB6F00</color>
+    <color name="background_light_yellow">#615046</color>
+
+    <!--  Change password -->
+    <color name="change_pwd_text_hint">#444444</color>
+    <color name="change_pwd_text_seperator">#777777</color>
+
+    <!--  Playlist password -->
+    <color name="btn_text_color">#5F6062</color>
+
+
+    <!--  playlist and genre color codes-->
+    <color name="dark_grey">#1c1c1c</color>
+    <color name="light_grey">#202020</color>
+
+    <color name="rounded_Button_Color">#3D0E44</color>
+
+    <color name="login_username_hint_text">#C6859D</color>
+
+    <color name="login_edittext_view">#C77CA3</color>
+
+    <color name="login_text">#565759</color>
+    <color name="rounded_button_sign_up">#471C6B</color>
+
+</resources>

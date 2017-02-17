@@ -1,0 +1,61 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="#000B1F">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@+id/rlLabel"
+    android:layout_marginLeft="@dimen/dimen_10"
+    android:layout_marginRight="@dimen/dimen_10"
+    android:layout_marginTop="@dimen/dimen_10"
+    android:layout_marginBottom="@dimen/dimen_10"
+    android:clickable="false"
+    android:gravity="center"
+    android:orientation="horizontal"
+    android:weightSum="1">
+
+    <ImageView
+        android:id="@+id/ivBackwardDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
+        android:clickable="true"
+        android:src="@drawable/backward_video" />
+
+
+    <ImageView
+        android:id="@+id/ivPreviousDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
+        android:clickable="true"
+        android:src="@drawable/previous_video" />
+
+
+    <ImageView
+        android:id="@+id/ivPlayDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
+        android:clickable="true"
+        android:src="@drawable/stop_video" />
+
+    <ImageView
+        android:id="@+id/ivNextDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
+        android:clickable="true"
+        android:src="@drawable/next_video" />
+
+    <ImageView
+        android:id="@+id/ivForwardDetail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight=".2"
+        android:clickable="true"
+        android:src="@drawable/forward_video" />
+
+</LinearLayout>
+</LinearLayout>

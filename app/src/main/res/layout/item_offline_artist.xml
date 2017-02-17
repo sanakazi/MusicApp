@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/home_fragment_bg">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+            <com.android.volley.toolbox.NetworkImageView
+                android:id="@+id/ivThumbnail"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:scaleType="centerCrop"
+                android:fitsSystemWindows="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="10dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:background="@drawable/playlist_music_white"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:id="@+id/tvName"
+                android:layout_marginLeft="10dp"
+                android:textColor="#ffffff"
+                android:layout_toEndOf="@+id/ivThumbnail"
+                android:layout_toRightOf="@+id/ivThumbnail"
+                android:layout_toStartOf="@+id/ivDetail"
+                android:layout_toLeftOf="@+id/ivDetail"
+                android:layout_marginTop="5dp"
+                android:layout_centerVertical="true"
+                android:layout_height="wrap_content" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/tvName"
+                android:layout_marginLeft="10dp"
+                android:id="@+id/tvDetail"
+                android:layout_toEndOf="@+id/ivThumbnail"
+                android:layout_toRightOf="@+id/ivThumbnail"
+                android:layout_toStartOf="@+id/ivDetail"
+                android:layout_toLeftOf="@+id/ivDetail"
+                android:visibility="gone"
+                android:textColor="#7C8083"
+                android:layout_height="wrap_content" />
+
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_centerInParent="true"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:src="@drawable/detail"
+                android:id="@+id/ivDetail"
+                android:visibility="gone"
+                android:layout_height="wrap_content" />
+
+        </RelativeLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:background="#333333"
+            android:layout_height="0.5dp"/>
+
+    </LinearLayout>
+
+
+</RelativeLayout>

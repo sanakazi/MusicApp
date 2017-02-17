@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+    <RelativeLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/rlDescription"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/home_fragment_bg">
+
+        <ImageView
+            android:id="@+id/ivDesSongImage"
+            android:layout_width="150dp"
+            android:layout_height="150dp"
+            android:src="@drawable/home_item" />
+
+        <TextView
+            android:id="@+id/tvDesSongName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@+id/ivDesSongImage"
+            android:text="rhghhghghhgrjgjer"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/txt_20" />
+
+        <TextView
+            android:id="@+id/tvDesAlbumName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/tvDesSongName"
+            android:layout_toRightOf="@+id/ivDesSongImage"
+            android:text=""
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/txt_15" />
+
+        <WebView
+            android:id="@+id/webView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/ivDesSongImage"
+            android:background="@android:color/transparent"
+            android:layout_marginTop="@dimen/dimen_20"></WebView>
+
+        <LinearLayout
+            android:id="@+id/lnrCancel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@android:color/white"
+            android:gravity="center">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dimen_10"
+                android:gravity="center"
+                android:text="@string/txt_cancel"
+                android:textColor="@android:color/background_dark"
+                android:textSize="@dimen/txt_20" />
+        </LinearLayout>
+    </RelativeLayout>

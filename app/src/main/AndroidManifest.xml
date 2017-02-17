@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.musicapp">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
+    <application
+        android:name=".others.MusicApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:largeHeap="true"
+        android:supportsRtl="true"
+        android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+        <activity
+            android:name=".activities.AppIntroActivityNew"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activities.AesDemo"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AudioPlayerActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PlaylistSongActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.SignupActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.VideoPlayerActivity"
+            android:configChanges="orientation|screenSize|keyboardHidden"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ResetPasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PlayerScreenListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.TermsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AboutActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.LoginActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ChangePasswordActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AudioDetailScreen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PlayerScreenVideoListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.SongsLikedActivity"
+            android:label="Songs"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.HomeItemClickListActivity"
+            android:parentActivityName=".activities.MainActivity"
+            android:screenOrientation="portrait">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".activities.MainActivity" />
+        </activity>
+        <activity
+            android:name=".activities.HomeItemClickDetailsActivity"
+            android:label=""
+            android:screenOrientation="portrait" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
+            android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <meta-data
+            android:name="io.fabric.ApiKey"
+            android:value="TvmqChGVFraY2NySfw9dURdYV" />
+        <meta-data
+            android:name="com.facebook.sdk.ApplicationId"
+            android:value="@string/facebook_app_id" />
+
+        <activity
+            android:name=".activities.AccountActivity"
+            android:label="Account"
+            android:screenOrientation="portrait" />
+
+        <service android:name=".service.BackgroundSoundService" />
+
+        <activity
+            android:name=".activities.SettingsActivity"
+            android:label="Settings"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.MainActivity"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".activities.PlayListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.PlaylistTakeOverActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.SongTakeoverActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.ArtistActivity"
+            android:label="Artists"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.GenreActivity"
+            android:label="Genres"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AllGenreActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AllGenreStartActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AllArtistsStartActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.AllArtistsActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".activities.UserProfileActivity"
+            android:label=" "
+            android:screenOrientation="portrait" />
+        <activity android:name=".activities.SearchActivity" />
+        <activity android:name=".activities.SubscriptionActivity" />
+        <activity
+            android:name=".activities.BrowseItemListActivity"
+            android:label=" "
+            android:screenOrientation="portrait"></activity>
+        <activity android:name=".activities.LiveStreamVideoActivity"></activity>
+    </application>
+
+</manifest>

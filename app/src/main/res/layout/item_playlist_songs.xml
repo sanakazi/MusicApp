@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dimen_10"
+    android:background="@color/home_fragment_bg"
+    android:orientation="vertical">
+
+    <ImageView
+        android:id="@+id/ivThumb"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_centerVertical="true"
+        android:src="@drawable/home_logo" />
+
+    <TextView
+        android:id="@+id/tvName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_toEndOf="@+id/ivThumb"
+        android:layout_toRightOf="@+id/ivThumb"
+        android:text="rertyer"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/txt_18" />
+    <TextView
+        android:id="@+id/tvDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_toEndOf="@+id/ivThumb"
+        android:layout_toRightOf="@+id/ivThumb"
+        android:layout_below="@+id/tvName"
+        android:text="rger"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/txt_15" />
+
+    <ImageView
+        android:id="@+id/ivDetail"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:src="@drawable/detail" />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/ivThumb"
+        android:layout_marginTop="@dimen/dimen_10"
+        android:background="@color/search_seperator"></View>
+</RelativeLayout>

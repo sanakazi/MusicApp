@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_fragment_bg">
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/home_header"
+        android:fitsSystemWindows="true"
+        android:orientation="horizontal"
+        app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:layout_marginBottom="@dimen/dimen_5"
+            android:orientation="horizontal"
+            android:id="@+id/lnrSearch"
+            android:weightSum="1"
+            android:background="@drawable/rounded_corner_linear">
+
+            <EditText
+                android:layout_width="0dp"
+                android:layout_weight=".9"
+                android:padding="@dimen/dimen_5"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:id="@+id/edtSerach"
+                android:hint="@string/txt_search"
+                android:textColorHint="@android:color/white"
+                android:textSize="20sp"
+                android:textColor="@android:color/white"
+                android:background="@android:color/transparent" />
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:id="@+id/ivSearch"
+                android:layout_height="match_parent"
+                android:src="@drawable/search"/>
+
+        </LinearLayout>
+    </android.support.v7.widget.Toolbar>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <RelativeLayout
+            android:padding="5dp"
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_gravity="center">
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/rvSearchList"
+                android:scrollbars="vertical"
+                android:layout_marginLeft="@dimen/dimen_5"
+                android:layout_marginRight="@dimen/dimen_5"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:visibility="gone"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
+            <LinearLayout
+               android:layout_centerVertical="true"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lnrtvSearch"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/search_music_app" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_search_music"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/txt_25"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_find"
+                    android:textColor="@color/text_color_find"
+                    android:textSize="@dimen/txt_18"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
+
+        </RelativeLayout>
+
+
+
+        <ProgressBar
+            android:id="@+id/progressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="70dp"
+            android:layout_height="70dp"
+            android:indeterminateDrawable="@drawable/customize_progress"
+            android:visibility="gone"
+            android:layout_gravity="center"/>
+    </FrameLayout>
+
+
+
+</LinearLayout>

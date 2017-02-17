@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:layerType="software"
+    android:background="@drawable/login_bg"
+    android:layout_height="match_parent">
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="@dimen/dimen_70"
+        android:layout_height="@dimen/dimen_70"
+        android:layout_centerInParent="true"
+        android:indeterminateDrawable="@drawable/customize_progress"
+        android:visibility="gone" />
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_height="wrap_content"
+        android:layout_width="match_parent"
+        card_view:theme="@style/ToolbarStyle"
+        android:fitsSystemWindows="true"
+        card_view:navigationIcon="?attr/homeAsUpIndicator"
+        android:minHeight="?attr/actionBarSize">
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_login"
+            android:textSize="@dimen/txt_20"
+            android:textColor="#ffffff"
+            android:layout_gravity="center"
+            android:id="@+id/toolbar_title" />
+
+    </android.support.v7.widget.Toolbar>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@+id/toolbar"
+        android:fitsSystemWindows="true">
+
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/linear"
+                android:fitsSystemWindows="true"
+                android:background="@android:color/transparent"
+                android:orientation="vertical">
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/cardFb"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:padding="@dimen/dimen_10"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_10"
+                    android:background="@drawable/rounded_corner_button_login"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/txt_login_fb"
+                        android:id="@+id/fb"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/txt_18"
+                        android:textColor="@android:color/white"
+                        android:background="@android:color/transparent"
+                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content" />
+
+
+                    <ImageView
+                        android:layout_width="@dimen/dimen_20"
+                        android:layout_centerInParent="true"
+                        android:layout_toLeftOf="@+id/fb"
+                        android:layout_marginRight="@dimen/dimen_5"
+                        android:src="@drawable/facebook"
+                        android:layout_height="@dimen/dimen_20" />
+
+
+                </RelativeLayout>
+
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:id="@+id/cardTwit"
+                    android:layout_marginTop="@dimen/dimen_10"
+                    android:layout_marginLeft="@dimen/dimen_10"
+                    android:layout_marginRight="@dimen/dimen_10"
+                    android:padding="@dimen/dimen_10"
+                    android:background="@drawable/rounded_corner_button_login"
+                    android:layout_height="wrap_content">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:text="@string/txt_login_twit"
+                        android:id="@+id/twit"
+                        android:textAllCaps="false"
+                        android:textSize="@dimen/txt_18"
+                        android:textColor="@android:color/white"
+                        android:background="@android:color/transparent"
+                        android:layout_centerInParent="true"
+                        android:layout_height="wrap_content" />
+
+
+                    <ImageView
+                        android:layout_width="@dimen/dimen_20"
+                        android:layout_centerInParent="true"
+                        android:layout_toLeftOf="@+id/twit"
+                        android:layout_marginRight="@dimen/dimen_5"
+                        android:src="@drawable/twitter"
+                        android:layout_height="@dimen/dimen_20" />
+
+                </RelativeLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:text="@string/or"
+                    android:textSize="@dimen/txt_20"
+                    android:layout_gravity="center"
+                    android:textColor="@android:color/white"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"/>
+
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/dimen_20"
+                        android:background="@android:color/transparent"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_marginRight="@dimen/dimen_10"
+                        android:hint="@string/txt_login_user_name"
+                        android:id="@+id/edtUserName"
+                        android:textColorHint="@color/login_username_hint_text"
+                        android:privateImeOptions="nm"
+                        android:inputType="textEmailAddress|textNoSuggestions"
+                        android:singleLine="true"
+                        android:padding="@dimen/dimen_2"
+                        android:layout_height="wrap_content" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:background="@color/login_edittext_view"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_marginRight="@dimen/dimen_10"
+                        android:layout_height="0.05dp"/>
+
+
+                    <EditText
+                        android:layout_width="match_parent"
+                        android:layout_marginTop="@dimen/dimen_20"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_marginRight="@dimen/dimen_10"
+                        android:hint="@string/txt_login_password"
+                        android:padding="@dimen/dimen_2"
+                        android:id="@+id/edtPwd"
+                        android:singleLine="true"
+                        android:textColorHint="@color/login_username_hint_text"
+                        android:inputType="textPassword|textNoSuggestions"
+                        android:background="@android:color/transparent"
+                        android:layout_height="wrap_content" />
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:background="@color/login_edittext_view"
+                        android:layout_marginLeft="@dimen/dimen_10"
+                        android:layout_marginRight="@dimen/dimen_10"
+                        android:layout_height="0.05dp"/>
+
+
+            </LinearLayout>
+
+
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="@string/txt_forgot_pwd"
+            android:textColor="@android:color/white"
+            android:layout_gravity="center"
+            android:textSize="@dimen/txt_15"
+            android:id="@+id/tvForgotPwd"
+            android:layout_marginBottom="@dimen/dimen_20"
+            android:layout_height="wrap_content" />
+
+
+        <Button
+            android:layout_width="match_parent"
+            android:background="@android:color/white"
+            android:text="@string/txt_login"
+            android:id="@+id/tvBtnLogin"
+            android:layout_gravity="bottom"
+            android:textColor="@color/login_text"
+            android:textSize="@dimen/txt_18"
+            android:textAllCaps="false"
+            android:layout_height="wrap_content" />
+
+    </LinearLayout>
+
+</RelativeLayout>

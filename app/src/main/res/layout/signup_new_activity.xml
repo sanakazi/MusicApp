@@ -1,0 +1,377 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:fitsSystemWindows="true"
+    android:layerType="software"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fitsSystemWindows="true"
+        android:background="@drawable/signup_bg">
+
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            card_view:theme="@style/ToolbarStyle"
+            android:fitsSystemWindows="true"
+            android:minHeight="?attr/actionBarSize">
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sign Up"
+                android:textSize="20sp"
+                android:textColor="#ffffff"
+                android:layout_gravity="center"
+                android:id="@+id/toolbar_title" />
+
+
+        </android.support.v7.widget.Toolbar>
+
+        <LinearLayout
+            android:id="@+id/lnrMainContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_above="@+id/rlBottom"
+            android:layout_below="@+id/toolbar"
+            android:layout_marginLeft="@dimen/dimen_10"
+            android:fitsSystemWindows="true"
+            android:layout_marginRight="@dimen/dimen_10"
+            android:layout_marginTop="@dimen/dimen_28"
+            android:orientation="vertical">
+
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true">
+
+                <!--changed-->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:orientation="vertical">
+
+                       <!-- <android.support.v7.widget.CardView
+                            android:id="@+id/cardFb"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            card_view:cardBackgroundColor="@color/loginbtn_color"
+                            card_view:cardCornerRadius="10dp"
+                            card_view:cardElevation="5dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/dimen_5">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dimen_35"
+                                    android:layout_height="@dimen/dimen_30"
+                                    android:layout_toLeftOf="@+id/tvFb"
+                                    android:src="@drawable/facebook" />
+
+                                <TextView
+                                    android:id="@+id/tvFb"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:gravity="center"
+                                    android:text="@string/txt_fb"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="@dimen/txt_18" />
+                            </RelativeLayout>
+                        </android.support.v7.widget.CardView>-->
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:id="@+id/cardFb"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            android:padding="@dimen/dimen_10"
+                            android:background="@drawable/rounded_corner_button_sign_up"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:text="@string/txt_login_fb"
+                                android:id="@+id/fb"
+                                android:textAllCaps="false"
+                                android:textSize="@dimen/txt_18"
+                                android:textColor="@android:color/white"
+                                android:background="@android:color/transparent"
+                                android:layout_centerInParent="true"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="@dimen/dimen_20"
+                                android:layout_centerInParent="true"
+                                android:layout_toLeftOf="@+id/fb"
+                                android:layout_marginRight="@dimen/dimen_5"
+                                android:src="@drawable/facebook"
+                                android:layout_height="@dimen/dimen_20" />
+
+
+                        </RelativeLayout>
+
+                      <!--  <android.support.v7.widget.CardView
+                            android:id="@+id/cardTwit"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            card_view:cardBackgroundColor="@color/loginbtn_color"
+                            card_view:cardCornerRadius="10dp"
+                            card_view:cardElevation="5dp">
+
+                            <RelativeLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_margin="@dimen/dimen_5">
+
+                                <ImageView
+                                    android:layout_width="@dimen/dimen_35"
+                                    android:layout_height="@dimen/dimen_30"
+                                    android:layout_toLeftOf="@+id/tvTwit"
+                                    android:src="@drawable/twitter" />
+
+                                <TextView
+                                    android:id="@+id/tvTwit"
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:layout_centerInParent="true"
+                                    android:gravity="center"
+                                    android:text="@string/txt_twit"
+                                    android:textColor="@android:color/white"
+                                    android:textSize="@dimen/txt_18" />
+                            </RelativeLayout>
+                        </android.support.v7.widget.CardView>-->
+
+                        <RelativeLayout
+                            android:layout_width="match_parent"
+                            android:id="@+id/cardTwit"
+                            android:layout_marginTop="@dimen/dimen_10"
+                            android:padding="@dimen/dimen_10"
+                            android:background="@drawable/rounded_corner_button_sign_up"
+                            android:layout_height="wrap_content">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:text="@string/txt_login_twit"
+                                android:id="@+id/twit"
+                                android:textAllCaps="false"
+                                android:textSize="@dimen/txt_18"
+                                android:textColor="@android:color/white"
+                                android:background="@android:color/transparent"
+                                android:layout_centerInParent="true"
+                                android:layout_height="wrap_content" />
+
+
+                            <ImageView
+                                android:layout_width="@dimen/dimen_20"
+                                android:layout_centerInParent="true"
+                                android:layout_toLeftOf="@+id/twit"
+                                android:layout_marginRight="@dimen/dimen_5"
+                                android:src="@drawable/twitter"
+                                android:layout_height="@dimen/dimen_20" />
+
+                        </RelativeLayout>
+
+
+                        <TextView
+                            android:id="@+id/tvEmail"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerInParent="true"
+                            android:layout_marginTop="@dimen/dimen_20"
+                            android:gravity="center"
+                            android:text="@string/txt_with_mail"
+                            android:textColor="@android:color/white"
+                            android:textSize="@dimen/txt_20" />
+                    </LinearLayout>
+
+
+                    <!--change-->
+
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:layout_marginTop="10dp">
+
+                        <EditText
+                            android:id="@+id/edtEmail"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_3"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/txt_email"
+                            android:inputType="textEmailAddress"
+                            android:padding="@dimen/dimen_3"
+                            android:textColorHint="@color/signup_txt_white"
+                            android:textSize="@dimen/txt_18" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dimen_1"
+                            android:layout_marginTop="@dimen/dimen_5"
+                            android:background="@color/signup_txt_white"></View>
+
+                        <EditText
+                            android:id="@+id/edtPwd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_3"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/txt_password"
+                            android:inputType="textPassword"
+                            android:padding="@dimen/dimen_3"
+                            android:textColorHint="@color/signup_txt_white"
+                            android:textSize="@dimen/txt_18" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dimen_1"
+                            android:layout_marginTop="@dimen/dimen_5"
+                            android:background="@color/signup_txt_white"></View>
+
+                        <EditText
+                            android:id="@+id/edtUserName"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_3"
+                            android:background="@android:color/transparent"
+                            android:hint="@string/txt_user_name"
+                            android:maxLines="1"
+                            android:singleLine="true"
+                            android:padding="@dimen/dimen_3"
+                            android:textColorHint="@color/signup_txt_white"
+                            android:textSize="@dimen/txt_18" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dimen_1"
+                            android:layout_marginTop="@dimen/dimen_5"
+                            android:background="@color/signup_txt_white"></View>
+
+                        <EditText
+                            android:id="@+id/edtDob"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_3"
+                            android:background="@android:color/transparent"
+                            android:editable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="@string/txt_dob"
+                            android:padding="@dimen/dimen_3"
+                            android:textColorHint="@color/signup_txt_white"
+                            android:textSize="@dimen/txt_18" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dimen_1"
+                            android:layout_marginTop="@dimen/dimen_5"
+                            android:background="@color/signup_txt_white"></View>
+
+                        <EditText
+                            android:id="@+id/edtGender"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/dimen_3"
+                            android:background="@android:color/transparent"
+                            android:editable="false"
+                            android:focusableInTouchMode="false"
+                            android:hint="@string/txt_gender"
+                            android:padding="@dimen/dimen_3"
+                            android:textColorHint="@color/signup_txt_white"
+                            android:textSize="@dimen/txt_18" />
+
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="@dimen/dimen_1"
+                            android:layout_marginTop="@dimen/dimen_5"
+                            android:background="@color/signup_txt_white"></View>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+        </LinearLayout>
+
+        <RelativeLayout
+            android:id="@+id/rlBottom"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true">
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/dimen_10"
+                android:id="@+id/rlTerm"
+                android:gravity="center">
+
+                <TextView
+                    android:id="@+id/tvTerm"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="@string/txt_by_signup"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/txt_12" />
+                <LinearLayout
+                    android:layout_marginLeft="5dp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_toEndOf="@+id/tvTerm"
+                    android:layout_toRightOf="@+id/tvTerm">
+                    <TextView
+
+                        android:id="@+id/tvTermCon"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:gravity="center"
+                        android:text="@string/txt_term_condition"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/txt_12" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@android:color/white"></View>
+                </LinearLayout>
+            </RelativeLayout>
+            <TextView
+                android:id="@+id/tvBtnSignup"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/rlTerm"
+                android:background="@android:color/white"
+                android:gravity="center"
+                android:padding="@dimen/dimen_10"
+                android:text="@string/txt_signup"
+                android:textSize="@dimen/txt_18"></TextView>
+        </RelativeLayout>
+
+
+    </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerInParent="true"
+        android:indeterminateDrawable="@drawable/customize_progress"
+        android:visibility="gone" />
+</RelativeLayout>
+
+

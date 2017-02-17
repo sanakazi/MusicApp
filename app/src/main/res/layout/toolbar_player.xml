@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/dimen_5"
+    android:layout_marginRight="@dimen/dimen_5"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="?android:attr/actionBarSize">
+
+        <ImageView
+            android:id="@+id/ivDown"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_centerVertical="true"
+            android:src="@drawable/down" />
+
+        <TextView
+            android:id="@+id/tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/ivDown"
+            android:layout_toEndOf="@+id/ivDown"
+            android:singleLine="true"
+            android:maxLines="1"
+            android:layout_toStartOf="@+id/ivOption"
+            android:layout_toLeftOf="@+id/ivOption"
+            android:text="Album"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/txt_15"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/tvAlbumName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_centerHorizontal="true"
+            android:layout_toRightOf="@+id/ivDown"
+            android:layout_toEndOf="@+id/ivDown"
+            android:singleLine="true"
+            android:layout_marginLeft="@dimen/dimen_3"
+            android:layout_marginRight="@dimen/dimen_3"
+            android:maxLines="1"
+            android:layout_toStartOf="@+id/ivOption"
+            android:layout_toLeftOf="@+id/ivOption"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/txt_20" />
+
+        <ImageView
+            android:id="@+id/ivOption"
+            android:layout_width="wrap_content"
+            android:layout_height="25dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:src="@drawable/option" />
+    </RelativeLayout>
+
+</LinearLayout>

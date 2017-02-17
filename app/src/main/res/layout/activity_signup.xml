@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/signup_bg"
+    android:orientation="vertical"
+    android:weightSum="1">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:background="@android:color/transparent"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/dimen_10"
+        android:layout_weight=".5"
+        android:orientation="vertical"
+        android:weightSum="3">
+
+        <TextView
+            android:id="@+id/tvTitle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="@string/txt_signup"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/txt_25"
+            android:textStyle="bold" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardFb"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                card_view:cardBackgroundColor="@color/loginbtn_color"
+                card_view:cardCornerRadius="10dp"
+                card_view:cardElevation="5dp"
+               >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_margin="@dimen/dimen_3"
+                    android:layout_height="wrap_content">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/tvFb"
+                        android:src="@drawable/facebook" />
+
+                    <TextView
+                        android:id="@+id/tvFb"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/txt_fb"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/txt_20" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+
+
+
+            <android.support.v7.widget.CardView
+                android:id="@+id/cardTwit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/dimen_10"
+                card_view:cardBackgroundColor="@color/loginbtn_color"
+                card_view:cardCornerRadius="10dp"
+                card_view:cardElevation="5dp"
+              >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/dimen_3">
+
+                    <ImageView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_toLeftOf="@+id/tvTwit"
+                        android:src="@drawable/twitter" />
+
+                    <TextView
+                        android:id="@+id/tvTwit"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_centerInParent="true"
+                        android:gravity="center"
+                        android:text="@string/txt_twit"
+                        android:textColor="@android:color/white"
+                        android:textSize="@dimen/txt_20" />
+                </RelativeLayout>
+            </android.support.v7.widget.CardView>
+            <TextView
+                android:id="@+id/tvEmail"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:gravity="center"
+                android:text="@string/txt_with_mail"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/txt_20" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_10"
+        android:layout_weight=".4"
+        android:orientation="vertical">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/txt_email"
+            android:inputType="textEmailAddress"
+            android:textSize="@dimen/txt_18"
+            android:layout_marginTop="@dimen/dimen_3"
+            android:padding="@dimen/dimen_3"
+            android:id="@+id/edtEmail"
+            android:textColorHint="@color/signup_txt_white"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="@color/signup_txt_white"></View>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/txt_password"
+            android:inputType="textPassword"
+            android:textSize="@dimen/txt_18"
+            android:layout_marginTop="@dimen/dimen_3"
+            android:padding="@dimen/dimen_3"
+            android:id="@+id/edtPwd"
+            android:textColorHint="@color/signup_txt_white"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="@color/signup_txt_white"></View>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/txt_user_name"
+            android:textSize="@dimen/txt_18"
+            android:layout_marginTop="@dimen/dimen_3"
+            android:padding="@dimen/dimen_3"
+            android:id="@+id/edtUserName"
+            android:textColorHint="@color/signup_txt_white"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="@color/signup_txt_white"></View>
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/txt_dob"
+            android:textSize="@dimen/txt_18"
+            android:layout_marginTop="@dimen/dimen_3"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:padding="@dimen/dimen_3"
+            android:id="@+id/edtDob"
+            android:textColorHint="@color/signup_txt_white"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="@color/signup_txt_white"></View>
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:hint="@string/txt_gender"
+            android:textSize="@dimen/txt_18"
+            android:layout_marginTop="@dimen/dimen_3"
+            android:editable="false"
+            android:focusableInTouchMode="false"
+            android:padding="@dimen/dimen_3"
+            android:id="@+id/edtGender"
+            android:textColorHint="@color/signup_txt_white"/>
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dimen_1"
+            android:layout_marginTop="@dimen/dimen_5"
+            android:background="@color/signup_txt_white"></View>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight=".1">
+        <TextView
+            android:id="@+id/tvTerm"
+            android:layout_alignParentTop="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:text="@string/txt_term_condition"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/txt_15" />
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:id="@+id/tvBtnSignup"
+            android:background="@android:color/white"
+            android:text="@string/txt_signup"
+            android:layout_below="@+id/tvTerm"
+            android:textSize="@dimen/txt_18"></TextView>
+    </RelativeLayout>
+
+
+
+
+</LinearLayout>
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:indeterminateDrawable="@drawable/customize_progress"
+        android:visibility="gone"
+        android:layout_centerInParent="true"/>
+</RelativeLayout>

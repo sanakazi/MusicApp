@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/reset_email_background"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Rename Playlist"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/txt_18"
+        android:textStyle="bold"
+        android:layout_margin="@dimen/dimen_10"
+        android:id="@+id/textView" />
+
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="@dimen/txt_15"
+        android:id="@+id/edtPopupName"
+        android:background="@android:color/transparent"
+        android:layout_margin="@dimen/dimen_10"
+        android:hint="@string/popup_create_playlist_name"
+        android:textColorHint="@color/hint_color"
+        android:textColor="@android:color/white"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="@dimen/dimen_10"
+        android:layout_marginRight="@dimen/dimen_10"
+        android:background="@color/hint_color"></View>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_margin="@dimen/dimen_10"
+        android:layout_height="wrap_content">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_ok"
+            android:textSize="@dimen/txt_18"
+            android:id="@+id/tvOk"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:textColor="@android:color/white"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/txt_cancel"
+            android:textSize="@dimen/txt_18"
+            android:id="@+id/tvCancel"
+            android:textColor="@android:color/white"
+            android:layout_centerVertical="true"
+            android:layout_toLeftOf="@+id/tvOk"
+            android:layout_toStartOf="@+id/tvOk"
+            android:layout_marginRight="@dimen/dimen_20"
+            android:layout_marginEnd="@dimen/dimen_20" />
+    </RelativeLayout>
+
+</LinearLayout>

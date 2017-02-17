@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_margin="20dp"
+    android:layout_height="wrap_content">
+
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_centerInParent="true"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:src="@mipmap/down"
+            android:id="@+id/downs"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentLeft="true"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Live Streaming from"
+            android:id="@+id/text1"
+            android:textColor="#86757D"
+            android:textSize="15sp"
+            android:layout_centerHorizontal="true"
+            android:layout_height="wrap_content" />
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:text="Swara Samrat Festival 2016"
+            android:id="@+id/live_stream_title"
+            android:gravity="center"
+            android:textColor="#BFB9B9"
+            android:textSize="18sp"
+            android:layout_marginTop="5dp"
+            android:layout_below="@+id/text1"
+            android:layout_centerInParent="true"
+            android:layout_height="wrap_content" />
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

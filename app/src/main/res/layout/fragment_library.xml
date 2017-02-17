@@ -1,0 +1,265 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/home_fragment_bg">
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <LinearLayout
+            android:id="@+id/main_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="@color/home_fragment_bg">
+
+            <RelativeLayout
+                android:id="@+id/btn_profile"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/profile_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/profile"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/profile_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Profile"
+                    android:layout_alignBaseline="@+id/profile_icon"/>
+
+
+            </RelativeLayout>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:minHeight="1dp"
+                android:background="#333333"/>
+            <RelativeLayout
+                android:id="@+id/btn_playlist"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/menu_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/playlist"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/menu_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Playlists"
+                    android:layout_alignBaseline="@+id/menu_icon"/>
+
+
+            </RelativeLayout>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:minHeight="1dp"
+                android:background="#333333"/>
+            <RelativeLayout
+                android:id="@+id/btn_songs"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/songs_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/songs"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/songs_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Songs"/>
+
+
+            </RelativeLayout>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:minHeight="1dp"
+                android:background="#333333"/>
+            <RelativeLayout
+                android:id="@+id/btn_artists"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/artists_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/artist"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/artists_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Artists"/>
+
+
+            </RelativeLayout>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:minHeight="1dp"
+                android:background="#333333"/>
+            <RelativeLayout
+                android:id="@+id/btn_genre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/genre_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/videopodcast"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/genre_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Genre"/>
+
+
+            </RelativeLayout>
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:minHeight="1dp"
+                android:background="#333333"/>
+            <RelativeLayout
+                android:id="@+id/btn_settings"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/settings_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@mipmap/settings"
+                    android:layout_alignParentLeft="true"
+                    />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/settings_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="20sp"
+                    android:text="Settings"/>
+
+
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:layout_marginTop="@dimen/dimen_5"
+                android:background="@color/search_section">
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Recently Played"
+                    android:textColor="@android:color/white"
+                    android:layout_margin="@dimen/dimen_10"
+                    android:textSize="@dimen/txt_20"/>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/rvRecentlyPlayed"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+
+            </LinearLayout>
+
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+</LinearLayout>

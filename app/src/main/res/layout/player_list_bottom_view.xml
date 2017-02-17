@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:seekarc="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:background="#2A0854"
+    android:layout_height="wrap_content">
+<LinearLayout
+    android:layout_width="match_parent"
+    android:layout_marginRight="@dimen/dimen_10"
+    android:layout_marginLeft="@dimen/dimen_10"
+    android:layout_below="@+id/lnrDetail"
+    android:orientation="horizontal"
+    android:layout_marginTop="@dimen/dimen_10"
+    android:layout_marginBottom="@dimen/dimen_10"
+    android:layout_height="wrap_content">
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight=".1"
+        android:layout_height="wrap_content"
+        android:src="@drawable/cancel_enable"
+        android:id="@+id/ivShuffle"
+        />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight=".1"
+        android:layout_height="wrap_content"
+        android:src="@drawable/previous_audio"
+        android:id="@+id/ivPrevious"
+        />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight=".1"
+        android:layout_height="wrap_content"
+        android:id="@+id/ivPlay"
+        />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight=".1"
+        android:layout_height="wrap_content"
+        android:src="@drawable/next_audio"
+        android:id="@+id/ivNext"
+        />
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_weight=".1"
+        android:layout_height="wrap_content"
+        android:src="@drawable/repeat_disable"
+        android:id="@+id/ivRepeate"
+        />
+
+</LinearLayout>
+    </RelativeLayout>

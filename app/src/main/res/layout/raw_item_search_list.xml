@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/dimen_3"
+    android:id="@+id/rlMain"
+
+    >
+   <FrameLayout
+       android:id="@+id/ivThumbnailView"
+       android:layout_width="60dp"
+       android:layout_margin="@dimen/dimen_10"
+       android:layout_height="60dp">
+    <ImageView
+
+        android:id="@+id/ivThumbnail"
+        android:layout_width="60dp"
+        android:layout_height="60dp" />
+       <LinearLayout
+            android:visibility="gone"
+           android:id="@+id/ivThumbnailOverlayOpacity"
+           android:layout_width="match_parent"
+           android:layout_height="match_parent"
+           android:background="@color/black"
+           android:orientation="horizontal"
+           android:alpha="0.4"/>
+       <ImageView
+           android:visibility="gone"
+           android:id="@+id/ivThumbnailOverlay"
+           android:layout_width="15dp"
+           android:layout_height="15dp"
+           android:layout_gravity="center"
+           android:src="@drawable/audio_android"/>
+
+
+   </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@+id/ivThumbnailView"
+        android:layout_toEndOf="@+id/ivThumbnailView"
+        android:layout_toLeftOf="@+id/ivDetail"
+        android:layout_toStartOf="@+id/ivDetail"
+        android:layout_centerVertical="true"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvName"
+            android:textColor="@android:color/white"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SONG ABC"
+            android:textSize="@dimen/txt_15" />
+
+        <!--<TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@android:color/white"
+            android:layout_below="@+id/tvName"
+            android:id="@+id/tvArtist"
+            android:layout_marginRight="@dimen/dimen_5"
+            android:layout_toRightOf="@+id/tvThumbnail"
+            android:text="ARTIST ABC"
+            android:textSize="@dimen/txt_12" />-->
+    </LinearLayout>
+
+    <ImageView
+        android:layout_width="20dp"
+        android:layout_height="30dp"
+        android:src="@drawable/detail"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:id="@+id/ivDetail"/>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/search_seperator"
+        android:layout_below="@+id/ivThumbnailView"
+        android:layout_marginTop="@dimen/dimen_5"></View>
+</RelativeLayout>

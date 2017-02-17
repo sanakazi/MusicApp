@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@color/background_black"
+    android:orientation="vertical"
+    android:id="@+id/bottomPlayerView">
+    <SeekBar
+        android:id="@+id/seekView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:progressDrawable="@drawable/seekbar_styling"
+        android:thumb="@drawable/seekbar_thumb" >
+    </SeekBar>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_below="@+id/seekView"
+        android:layout_height="wrap_content">
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/up"
+            android:id="@+id/ivUp"
+            android:layout_centerVertical="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:text="Atma by colonial cousin"
+            android:id="@+id/tvPlayName"
+            android:textColor="@color/background_black_light"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/play_orange"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:id="@+id/ivBottomPlay"/>
+    </RelativeLayout>
+</RelativeLayout>
+</RelativeLayout>
