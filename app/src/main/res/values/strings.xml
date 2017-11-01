@@ -102,4 +102,8 @@
     <string name="txt_tap_song">Tap the button next to the song \nyou like and select "add to playlist"</string>
     <string name="txt_songs_find">Find Songs</string>
 
+
+    <!--Error message-->
+    <string name="error_msg">Something went wrong! Please try again later.</string>
+
 </resources>

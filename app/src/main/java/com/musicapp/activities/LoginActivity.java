@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.content.ContextCompat;
@@ -117,9 +119,12 @@ public class LoginActivity extends AppCompatActivity {
     private ArrayList<HomeDetailsJson.DataList> offlineSongArrayList = new ArrayList<>();
     private ArrayList<OfflineArtistItem> offlineArtistArrayList = new ArrayList<>();
 
+
+    String deviceToken;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
         //region facebook login
         FacebookSdk.sdkInitialize(this.getApplicationContext());
@@ -231,10 +236,22 @@ public class LoginActivity extends AppCompatActivity {
         loginActivity = this;
         deviceId = Settings.Secure.getString(LoginActivity.this.getContentResolver(),
                 Settings.Secure.ANDROID_ID);
+        deviceToken = deviceToken = PreferencesManager.getInstance(LoginActivity.this).getDeviceToken();
         PreferencesManager.getInstance(loginActivity).saveDeviceId(deviceId);
         initialize();
         setupViewAction();
+        // gcmToken();
     }
+
+   /* private void gcmToken()
+    {
+        Intent intent = new Intent(this, RegistrationIntentService.class);
+        startService(intent);
+        }
+*/
+
+
+
 
     private void initialize() {
         cardFb = (RelativeLayout) findViewById(R.id.cardFb);
@@ -334,6 +351,8 @@ public class LoginActivity extends AppCompatActivity {
             jsonParams.put("gender", gender);
             jsonParams.put("deviceId", deviceId);
             jsonParams.put("profilePic", profilePic);
+            jsonParams.put("deviceToken", deviceToken);
+            jsonParams.put("deviceType", "android");
             if (registerType.matches("1") || registerType.matches("2")) {
                 jsonParams.put("uniqueId", userSocialId);
             }
@@ -356,6 +375,7 @@ public class LoginActivity extends AppCompatActivity {
                                 Toast.makeText(loginActivity, response.getString("message"), Toast.LENGTH_LONG).show();
                                 PreferencesManager.getInstance(loginActivity).saveDeviceId(deviceId);
                                 PreferencesManager.getInstance(loginActivity).saveUserId(response.getInt("userId"));
+                                PreferencesManager.getInstance(loginActivity).saveIsLoggedIn(true);
                                 if (registerType.matches("1") || registerType.matches("2")) {
                                     PreferencesManager.getInstance(loginActivity).saveIsSocial(1);
                                 }
@@ -413,6 +433,9 @@ public class LoginActivity extends AppCompatActivity {
             jsonParams.put("userName", userName);
             jsonParams.put("password", password);
             jsonParams.put("deviceId", deviceId);
+            jsonParams.put("deviceToken", deviceToken);
+            jsonParams.put("deviceType", "android");
+
             System.out.println("Volley submit param" + jsonParams);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -435,7 +458,7 @@ public class LoginActivity extends AppCompatActivity {
                                 PreferencesManager.getInstance(loginActivity).saveUserId(response.getInt("userId"));
                                /* editor.putString("userId", response.getString("userId"));
                                 editor.commit();*/
-
+                                PreferencesManager.getInstance(loginActivity).saveIsLoggedIn(true);
                                 if (response.getString("isNewUser").equals("Y")) {
                                     Intent i = new Intent(loginActivity, AllGenreStartActivity.class);
                                     i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
@@ -573,7 +596,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().matches("")){
+                if (!s.toString().matches("")) {
                     edtTwo.requestFocus();
                 }
 
@@ -593,7 +616,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().matches("")){
+                if (!s.toString().matches("")) {
                     edtThree.requestFocus();
                 }
             }
@@ -611,7 +634,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().matches("")){
+                if (!s.toString().matches("")) {
                     edtFour.requestFocus();
                 }
             }
@@ -629,7 +652,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().matches("")){
+                if (!s.toString().matches("")) {
                     edtFive.requestFocus();
                 }
             }
@@ -648,7 +671,7 @@ public class LoginActivity extends AppCompatActivity {
 
             @Override
             public void afterTextChanged(Editable s) {
-                if (!s.toString().matches("")){
+                if (!s.toString().matches("")) {
                     edtSix.requestFocus();
                 }
             }
@@ -906,10 +929,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     private void continueLoginWebservice(final String userId, final int isSocialLogin) {
-        Log.w(TAG, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId);
+        Log.w(TAG, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId + "&DeviceToken=" + deviceToken + "&DeviceType=" + "android");
         progressBar.setVisibility(View.VISIBLE);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId
+                + "&DeviceToken=" + deviceToken + "&DeviceType=" + "android",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
@@ -920,6 +944,7 @@ public class LoginActivity extends AppCompatActivity {
                             if (jsonObject.getInt("id") == 1) {
                                 PreferencesManager.getInstance(loginActivity).saveDeviceId(deviceId);
                                 PreferencesManager.getInstance(loginActivity).saveUserId(jsonObject.getInt("userId"));
+                                PreferencesManager.getInstance(loginActivity).saveIsLoggedIn(true);
                                 if (isSocialLogin == 1) {
                                     PreferencesManager.getInstance(loginActivity).saveIsSocial(isSocialLogin);
                                 }

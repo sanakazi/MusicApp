@@ -11,7 +11,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -22,6 +26,7 @@ import com.google.gson.Gson;
 import com.musicapp.R;
 import com.musicapp.adapters.SongsLikedAdapter;
 import com.musicapp.fragments.ArtistFragment;
+import com.musicapp.others.ComonHelper;
 import com.musicapp.others.Utility;
 
 import com.musicapp.pojos.HomeDetailsJson;
@@ -48,6 +53,15 @@ public class SongsLikedActivity extends AppCompatActivity {
     ArrayList <HomeDetailsJson.DataList> video_detail_categories_list=new ArrayList<>();
     HomeDetailsJson.Columns columnListJson;
     SongsLikedAdapter myAdapter;
+
+    //bottom player
+    public static RelativeLayout bottomPlayerView;
+    SeekBar seekView;
+    TextView tvPlayName;
+    ImageView ivUp;
+    public static ImageView ivBottomPlay;
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,11 +77,73 @@ public class SongsLikedActivity extends AppCompatActivity {
         deviceId = PreferencesManager.getInstance(SongsLikedActivity.this).getDeviceId();
 
         getFavArtistService();
+        bottomPlayerEvents();
     }
 
+    public void bottomPlayerEvents() {
+
+        bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
+        ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
+        seekView = (SeekBar) findViewById(R.id.seekView);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
+        ivUp = (ImageView) findViewById(R.id.ivUp);
+
+
+        System.out.println("PLAYINGGG" + AudioPlayerActivity.isPlaying);
+        if (AudioPlayerActivity.isPlaying) {
+            bottomPlayerView.setVisibility(View.VISIBLE);
+            ComonHelper comonHelper = new ComonHelper();
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, SongsLikedActivity.this);
+        } else {
+            if (AudioPlayerActivity.isPause) {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, SongsLikedActivity.this);
+            } else {
+                bottomPlayerView.setVisibility(View.GONE);
+            }
+        }
+
+
+        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, SongsLikedActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+    }
     @Override
     protected void onRestart() {
         super.onRestart();
+        bottomPlayerEvents();
       if(myAdapter.dialog!=null){
           myAdapter.dialog.dismiss();
       }
@@ -165,4 +241,11 @@ public class SongsLikedActivity extends AppCompatActivity {
         }
         return true;
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomPlayerEvents();
+    }
+
 }

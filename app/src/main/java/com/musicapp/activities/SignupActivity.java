@@ -108,6 +108,7 @@ public class SignupActivity extends AppCompatActivity {
     private ArrayList<HomeDetailsJson.DataList> offlineSongArrayList = new ArrayList<>();
     private ArrayList<OfflineArtistItem> offlineArtistArrayList = new ArrayList<>();
     String termsCondition, privacyPolicy;
+    String deviceToken;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -203,7 +204,7 @@ public class SignupActivity extends AppCompatActivity {
 
         deviceId = Secure.getString(SignupActivity.this.getContentResolver(),
                 Secure.ANDROID_ID);
-
+        deviceToken = deviceToken = PreferencesManager.getInstance(SignupActivity.this).getDeviceToken();
 
         //for recentlyplayed songs
         Gson gsonSong = new Gson();
@@ -458,6 +459,8 @@ public class SignupActivity extends AppCompatActivity {
             jsonParams.put("gender", gender);
             jsonParams.put("deviceId", deviceId);
             jsonParams.put("profilePic", profilePic);
+            jsonParams.put("deviceToken", deviceToken);
+            jsonParams.put("deviceType", "android");
             if (registerType.matches("1") || registerType.matches("2")) {
                 jsonParams.put("uniqueId", userSocialId);
             }
@@ -482,6 +485,7 @@ public class SignupActivity extends AppCompatActivity {
                                 Toast.makeText(signupActivity, response.getString("message"), Toast.LENGTH_LONG).show();
                                 PreferencesManager.getInstance(signupActivity).saveDeviceId(deviceId);
                                 PreferencesManager.getInstance(signupActivity).saveUserId(response.getInt("userId"));
+                                PreferencesManager.getInstance(signupActivity).saveIsLoggedIn(true);
                                 if (registerType.matches("1") || registerType.matches("2")) {
                                     PreferencesManager.getInstance(signupActivity).saveIsSocial(1);
                                     temp_social_var = 1;
@@ -541,7 +545,7 @@ public class SignupActivity extends AppCompatActivity {
 
 
     private void initTwitter() {
-       /* TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+      /*  TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
         Fabric.with(this, new Twitter(authConfig));*/
 
 
@@ -604,10 +608,11 @@ public class SignupActivity extends AppCompatActivity {
     }
 
     private void continueLoginWebservice(final String userId, final int isSocialLogin) {
-        Log.w(TAG, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId);
+        Log.w(TAG, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId + "&DeviceToken=" + deviceToken + "&DeviceType=" + "android");
         progressBar.setVisibility(View.VISIBLE);
 
-        StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId,
+        StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.CONTINUE_LOGIN + "UserId=" + userId + "&DeviceId=" + deviceId
+                + "&DeviceToken=" + deviceToken + "&DeviceType=" + "android",
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {

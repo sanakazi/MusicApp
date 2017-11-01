@@ -3,8 +3,10 @@ package com.musicapp.fragments;
 import android.app.Dialog;
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -50,8 +52,6 @@ public class LivestreamFragment  extends Fragment {
     @Bind(R.id.btn_changeloc)
     TextView btn_changeloc;
     Dialog dialog;
-
-
     RecyclerView rvPlayList;
 
 
@@ -69,6 +69,7 @@ public class LivestreamFragment  extends Fragment {
         View view = inflater.inflate(R.layout.fragment_livestream, container, false);
         ButterKnife.bind(this,view);
       //  rvPlayList = (RecyclerView)view.findViewById(R.id.rvPlayList);
+
 
         return view;
     }
@@ -99,8 +100,8 @@ public class LivestreamFragment  extends Fragment {
     private void maincategory_webservice()
     {
 
-
         progressBar.setVisibility(View.VISIBLE);
+
         Log.w(TAG, "live stream url is" + Utility.LIVE_STREAM_URL+"UserId="+userId+"&DeviceId="+deviceId);
 
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.LIVE_STREAM_URL+"UserId="+userId+"&DeviceId="+deviceId,
@@ -239,13 +240,6 @@ public class LivestreamFragment  extends Fragment {
         dialog.show();
     }
 
-
-
-
-
-
-
-
     public class LivestreamLocationPopupAdapter extends RecyclerView.Adapter<LivestreamLocationPopupAdapter.SingleItemRowHolder> {
 
         private ArrayList<LivestreamJson.ConcertClass> itemsList;
@@ -259,7 +253,7 @@ public class LivestreamFragment  extends Fragment {
             mImageLoader = MySingleton.getInstance(mContext).getImageLoader();
             this.itemsList = itemsList;
             this.mContext = mContext;
-
+            //setHasStableIds(true);//changes by amol
         }
 
         @Override

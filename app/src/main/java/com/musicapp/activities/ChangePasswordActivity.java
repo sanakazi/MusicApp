@@ -15,6 +15,7 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -36,12 +37,14 @@ public class ChangePasswordActivity  extends AppCompatActivity {
     CardView crdSubmit;
     ChangePasswordActivity changePassword;
     ProgressBar progressBar;
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
     SharedPreferences sharedPreferences;
     int userId;
 
     ImageView ivUp, ivBottomPlay;
+    TextView tvPlayName;
+    ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -58,23 +61,10 @@ public class ChangePasswordActivity  extends AppCompatActivity {
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle(getResources().getString(R.string.txt_change_password));
         initialize();
+        events();
         setupViewAction();
 
-        //for bottom player
-        if (AudioPlayerActivity.isPlaying) {
-            bottomPlayerView.setVisibility(View.VISIBLE);
-            ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, changePassword);
-        } else {
-            if (AudioPlayerActivity.isPause) {
-                bottomPlayerView.setVisibility(View.VISIBLE);
-                ivBottomPlay.setImageResource(R.drawable.pause_orange);
-                ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, changePassword);
-            } else {
-                bottomPlayerView.setVisibility(View.GONE);
-            }
-        }
+
 
 
     }
@@ -88,12 +78,8 @@ public class ChangePasswordActivity  extends AppCompatActivity {
         //    tvTitle = (TextView) findViewById(R.id.tvTitle);
         // tvTitle.setText(getResources().getString(R.string.txt_change_password));
 
-        //for bottom view
-        bottomPlayerView=(RelativeLayout) findViewById(R.id.bottomPlayerView);
-        seekView=(SeekBar) findViewById(R.id.seekView) ;
-        ivUp=(ImageView) findViewById(R.id.ivUp);
-        ivBottomPlay=(ImageView) findViewById(R.id.ivBottomPlay);
     }
+
 
     private void setupViewAction() {
         crdSubmit.setOnClickListener(new View.OnClickListener() {
@@ -124,6 +110,35 @@ public class ChangePasswordActivity  extends AppCompatActivity {
             }
         });
 
+
+    }
+
+    private void events() {
+
+        //for bottom view
+        bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
+        seekView = (SeekBar) findViewById(R.id.seekView);
+        ivUp = (ImageView) findViewById(R.id.ivUp);
+        ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
+
+        //for bottom player
+        System.out.println("PLAYINGGG" + AudioPlayerActivity.isPlaying);
+        if (AudioPlayerActivity.isPlaying) {
+            bottomPlayerView.setVisibility(View.VISIBLE);
+            ComonHelper comonHelper = new ComonHelper();
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, changePassword);
+        } else {
+            if (AudioPlayerActivity.isPause) {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, changePassword);
+            } else {
+                bottomPlayerView.setVisibility(View.GONE);
+            }
+    }
+
         seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -137,18 +152,25 @@ public class ChangePasswordActivity  extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BackgroundSoundService.mPlayer.seekTo(seekView.getProgress());
-                ComonHelper.timer.cancel();
-                ComonHelper.updateSeekProgressTimer(seekView, changePassword);
-                AudioPlayerActivity.timer.cancel();
-                AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
-                audioPlayerActivity.updateProgressBar();
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, ChangePasswordActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
-
-
     }
-
     private void submitData() {
         hideKeyboard();
         progressBar.setVisibility(View.VISIBLE);
@@ -232,4 +254,15 @@ public class ChangePasswordActivity  extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        events();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        events();
+    }
 }

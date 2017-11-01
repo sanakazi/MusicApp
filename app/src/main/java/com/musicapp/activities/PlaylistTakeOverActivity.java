@@ -81,7 +81,7 @@ public class PlaylistTakeOverActivity extends Activity {
         ivThumbnail = (ImageView) findViewById(R.id.ivThumbnail);
         if (!thumbnail.matches("") || thumbnail!=null) {
          //   ivThumbnail.setImageUrl(thumbnail, mImageLoader);
-         //   Picasso.with(playlistTakeOverActivity).load(thumbnail).into(ivThumbnail);
+            Picasso.with(playlistTakeOverActivity).load(thumbnail).into(ivThumbnail);
         }
         tvPlaylistName = (TextView) findViewById(R.id.tvPlaylistName);
         tvPlaylistName.setText(playlistName);

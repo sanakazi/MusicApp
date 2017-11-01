@@ -54,7 +54,7 @@ public class ArtistActivity extends AppCompatActivity implements ArtistsAdapter.
     HomeDetailsJson.Columns columnListJson;
 
     //for bottom view
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
     TextView tvPlayName;
     ImageView ivUp;
@@ -90,13 +90,13 @@ public class ArtistActivity extends AppCompatActivity implements ArtistsAdapter.
         if (AudioPlayerActivity.isPlaying) {
             bottomPlayerView.setVisibility(View.VISIBLE);
             ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, ArtistActivity.this);
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, ArtistActivity.this);
         } else {
             if (AudioPlayerActivity.isPause) {
                 bottomPlayerView.setVisibility(View.VISIBLE);
                 ivBottomPlay.setImageResource(R.drawable.pause_orange);
                 ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, ArtistActivity.this);
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, ArtistActivity.this);
             } else {
                 bottomPlayerView.setVisibility(View.GONE);
             }
@@ -116,12 +116,22 @@ public class ArtistActivity extends AppCompatActivity implements ArtistsAdapter.
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BackgroundSoundService.mPlayer.seekTo(seekView.getProgress());
-                ComonHelper.timer.cancel();
-                ComonHelper.updateSeekProgressTimer(seekView, ArtistActivity.this);
-                AudioPlayerActivity.timer.cancel();
-                AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
-                audioPlayerActivity.updateProgressBar();
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, ArtistActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -289,6 +299,18 @@ public class ArtistActivity extends AppCompatActivity implements ArtistsAdapter.
         }
         Log.w(TAG ,message);
 
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        events();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        events();
     }
 
     @Override

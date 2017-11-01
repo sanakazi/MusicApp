@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:seekarc="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layerType="software"
     android:background="@drawable/audio_player_bg">
 <include layout="@layout/toolbar_player"
     android:id="@+id/header"></include>
@@ -13,24 +13,24 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/header"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="@dimen/dimen_30">
+        android:layout_marginTop="@dimen/dimen_20">
 
         <com.musicapp.others.SeekArc
             android:id="@+id/seekBar"
-            android:layout_width="370dp"
-            android:layout_height="370dp"
-            seekarc:arcWidth="3dp"
+            android:layout_width="wrap_content"
+            android:layout_height="320dp"
+            seekarc:arcWidth="5dp"
             android:padding="@dimen/dimen_30"
             android:layout_gravity="center" />
         <de.hdodenhof.circleimageview.CircleImageView
             xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_gravity="center"
             android:id="@+id/ivAlbum"
-            android:layout_width="@dimen/dimen_300"
-            android:layout_height="@dimen/dimen_300"
-            android:src="@drawable/download"
+            android:layout_width="220dp"
+            android:layout_height="220dp"
+            android:src="@mipmap/browse_wight"
             app:civ_border_width="2dp"
-            app:civ_border_color="@android:color/background_dark"/>
+            app:civ_border_color="@android:color/transparent" />
         <RelativeLayout
             android:layout_width="@dimen/dimen_250"
             android:layout_height="wrap_content"
@@ -59,48 +59,46 @@
             android:textColor="@color/arcseek_bar_dark" />
 
         </RelativeLayout>
+
+
     </FrameLayout>
-
-
-
 
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
         android:layout_below="@+id/seekArcContainer"
-        android:layout_alignLeft="@+id/header"
-        android:layout_alignStart="@+id/header">
+        android:layout_height="wrap_content">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:weightSum="1"
-    android:id="@+id/lnrDetail"
+            android:layout_marginTop="@dimen/dimen_20"
+            android:id="@+id/lnrDetail"
             android:orientation="horizontal">
-       <ImageView
-           android:layout_width="0dp"
-           android:layout_weight=".1"
-           android:layout_height="wrap_content"
-           android:src="@drawable/add"
-           android:visibility="invisible"
-           android:id="@+id/ivAdd"
-           />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@+id/ivAdd"
-            android:layout_weight=".8"
-            android:id="@+id/tvSong"
-            android:text="Shivashtakam"
-            android:textColor="@android:color/white"
-            android:gravity="center"
-            android:textSize="@dimen/txt_20"
-            android:layout_gravity="center"/>
             <ImageView
                 android:layout_width="0dp"
                 android:layout_weight=".1"
                 android:layout_height="wrap_content"
+                android:src="@drawable/add"
+                android:visibility="invisible"
+                android:id="@+id/ivAdd" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@+id/ivAdd"
+                android:layout_weight=".8"
+                android:id="@+id/tvSong"
+                android:text=""
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                android:textSize="@dimen/txt_20"
+                android:layout_gravity="center" />
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_weight=".1"
+                android:layout_height="20dp"
                 android:src="@drawable/detail"
                 android:id="@+id/ivDetail"
                 />
@@ -122,7 +120,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="@dimen/dimen_10"
                 android:layout_marginLeft="@dimen/dimen_10"
-                android:src="@drawable/cancel_enable"
+                android:src="@drawable/cancel_desable"
                 android:id="@+id/ivShuffle"
                 />
             <ImageView
@@ -135,6 +133,17 @@
                 android:layout_marginLeft="@dimen/dimen_30"
                 android:id="@+id/ivPrevious"
                 />
+
+            <ProgressBar
+                android:id="@+id/progressBarPlayer"
+                style="?android:attr/progressBarStyleSmallInverse"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerInParent="true"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:indeterminateDrawable="@drawable/customize_small_progressbar"
+                android:visibility="visible" />
             <ImageView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -168,4 +177,15 @@
 
         </RelativeLayout>
     </RelativeLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerInParent="true"
+        android:indeterminateDrawable="@drawable/customize_progress"
+        android:visibility="gone" />
+
+
 </RelativeLayout>

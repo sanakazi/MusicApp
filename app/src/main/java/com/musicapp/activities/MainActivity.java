@@ -23,6 +23,7 @@ import com.musicapp.fragments.HomeFragment;
 import com.musicapp.fragments.LibraryFragment;
 import com.musicapp.fragments.LivestreamFragment;
 import com.musicapp.others.ComonHelper;
+import com.musicapp.others.PlayerConstants;
 import com.musicapp.service.BackgroundSoundService;
 
 import butterknife.Bind;
@@ -69,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Bind(R.id.toolbar)
     Toolbar toolbar;
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
     TextView tvPlayName;
     ImageView ivUp;
@@ -132,16 +133,18 @@ public class MainActivity extends AppCompatActivity {
         ivUp = (ImageView) findViewById(R.id.ivUp);
 
 
+        System.out.println("PLAYINGGG" + AudioPlayerActivity.isPlaying);
         if (AudioPlayerActivity.isPlaying) {
             bottomPlayerView.setVisibility(View.VISIBLE);
             ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, MainActivity.this);
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, MainActivity.this);
         } else {
+
             if (AudioPlayerActivity.isPause) {
                 bottomPlayerView.setVisibility(View.VISIBLE);
                 ivBottomPlay.setImageResource(R.drawable.pause_orange);
                 ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, MainActivity.this);
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, MainActivity.this);
             } else {
                 bottomPlayerView.setVisibility(View.GONE);
             }
@@ -161,12 +164,23 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BackgroundSoundService.mPlayer.seekTo(seekView.getProgress());
-                ComonHelper.timer.cancel();
-                ComonHelper.updateSeekProgressTimer(seekView, MainActivity.this);
-                AudioPlayerActivity.timer.cancel();
-                AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
-                audioPlayerActivity.updateProgressBar();
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, MainActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
             }
         });
 
@@ -282,10 +296,32 @@ public class MainActivity extends AppCompatActivity {
     private void replaceFragment(Fragment fragment, String tag, boolean addtoBackStack) {
         if (addtoBackStack) {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, tag).addToBackStack(null).commit();
-//            toolbarNAvigationListener();
+//
+//
+//
+//
+//
+//
+//
+// toolbarNAvigationListener();
         } else {
             getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, tag).commit();
         }
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        System.out.println("RESTART CALLLED");
+        events();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        System.out.println("RESUME  CALLLED");
+        events();
+
     }
 
     @Override
@@ -315,7 +351,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
         }
-        finish();
+        // finish();
+        finishAffinity();
     }
 
 
@@ -327,4 +364,36 @@ public class MainActivity extends AppCompatActivity {
             inputManager.hideSoftInputFromWindow(view.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
+
+    public static void changeBottomUI() {
+        if (PlayerConstants.SONG_PAUSED) {
+            ivBottomPlay.setImageResource(R.drawable.pause_orange);
+        } else {
+            ivBottomPlay.setImageResource(R.drawable.play_orange);
+        }
+    }
+
+   /* @Override
+    protected void onNewIntent(Intent intent)
+    {
+        super.onNewIntent(intent);
+        if (AudioPlayerActivity.isPlaying) {
+            bottomPlayerView.setVisibility(View.VISIBLE);
+            ComonHelper comonHelper = new ComonHelper();
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp,tvPlayName, MainActivity.this);
+        } else {
+
+            if (AudioPlayerActivity.isPause)
+             {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp,tvPlayName, MainActivity.this);
+            }
+            else
+             {
+                bottomPlayerView.setVisibility(View.GONE);
+            }
+        }
+    }*/
 }

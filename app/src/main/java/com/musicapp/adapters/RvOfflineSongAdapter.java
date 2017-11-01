@@ -94,22 +94,60 @@ public class RvOfflineSongAdapter extends RecyclerView.Adapter<RvOfflineSongAdap
             final int typeId=list.get(position).getColumns().getSongTypeId();
             if (typeId==1){
                 //audio song
+
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                    }
+                    ComonHelper.pauseFlag = false;
+                    if (AudioPlayerActivity.isPlaying) {
+                        AudioPlayerActivity.timer.cancel();
+                        BackgroundSoundService.mPlayer.release();
+                        Intent intent = new Intent(context, BackgroundSoundService.class);
+                        ((Activity) context).stopService(intent);
+                    } else if (AudioPlayerActivity.isPause) {
+                        if (AudioPlayerActivity.timer != null) {
+                            AudioPlayerActivity.timer.cancel();
+                        }
+                        if (BackgroundSoundService.mPlayer != null) {
+                            BackgroundSoundService.mPlayer.release();
+                            Intent intent = new Intent(context, BackgroundSoundService.class);
+                            ((Activity) context).stopService(intent);
+                        }
+
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
                 Intent intent = new Intent(context, AudioPlayerActivity.class);
                 Bundle bund = new Bundle();
                 bund.putParcelableArrayList("categories", list);
                 bund.putParcelableArrayList("specific_categories", audio_itemsList);
                 bund.putInt("index", position);
+                bund.putString("des", list.get(position).getColumns().getDescription());
                 bund.putString(AudioPlayerActivity.ALBUM_NAME, "");
                 bund.putString("from", "home");
+                bund.putBoolean("isDeeplink", false);
                 intent.putExtras(bund);
+                ComonHelper.notifFlag = false;
+                context.startActivity(intent);
             }else if (typeId==2){
                 //video song
-                if (AudioPlayerActivity.isPlaying) {
-                    AudioPlayerActivity.timer.cancel();
-                    BackgroundSoundService.mPlayer.release();
-                    Intent intent = new Intent(context, BackgroundSoundService.class);
-                    ((Activity) context).stopService(intent);
+                try {
+                    if (AudioPlayerActivity.isPlaying) {
+                        AudioPlayerActivity.timer.cancel();
+                        BackgroundSoundService.mPlayer.release();
+                        Intent intent = new Intent(context, BackgroundSoundService.class);
+                        ((Activity) context).stopService(intent);
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
+
 
                 //video song
                 Intent intent = new Intent(context, VideoPlayerActivity.class);
@@ -120,6 +158,8 @@ public class RvOfflineSongAdapter extends RecyclerView.Adapter<RvOfflineSongAdap
                 b.putString("album_name", "");
                 b.putInt("songId", list.get(position).getColumns().getSongId());
                 b.putParcelableArrayList("specific_categories", video_itemsList);
+                b.putBoolean("isDeeplink", false);
+                b.putString("des", list.get(position).getColumns().getDescription());
                 intent.putExtras(b);
                 Toast.makeText(context, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                 context.startActivity(intent);
@@ -179,6 +219,34 @@ public class RvOfflineSongAdapter extends RecyclerView.Adapter<RvOfflineSongAdap
                             case R.id.item1:
                                 if (typeId==1){
                                     //audio song
+
+                                    try {
+                                        if (ComonHelper.timer != null) {
+                                            ComonHelper.timer.cancel();
+                                        }
+                                        ComonHelper.pauseFlag = false;
+                                        if (AudioPlayerActivity.isPlaying) {
+                                            AudioPlayerActivity.timer.cancel();
+                                            BackgroundSoundService.mPlayer.release();
+                                            Intent intent = new Intent(context, BackgroundSoundService.class);
+                                            ((Activity) context).stopService(intent);
+                                        } else if (AudioPlayerActivity.isPause) {
+                                            if (AudioPlayerActivity.timer != null) {
+                                                AudioPlayerActivity.timer.cancel();
+                                            }
+                                            if (BackgroundSoundService.mPlayer != null) {
+                                                BackgroundSoundService.mPlayer.release();
+                                                Intent intent = new Intent(context, BackgroundSoundService.class);
+                                                ((Activity) context).stopService(intent);
+                                            }
+
+
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+
                                     Intent intent = new Intent(context, AudioPlayerActivity.class);
                                     Bundle bund = new Bundle();
                                     bund.putParcelableArrayList("categories", list);
@@ -186,15 +254,24 @@ public class RvOfflineSongAdapter extends RecyclerView.Adapter<RvOfflineSongAdap
                                     bund.putInt("index", position);
                                     bund.putString(AudioPlayerActivity.ALBUM_NAME, "");
                                     bund.putString("from", "home");
+                                    bund.putString("des", audio_itemsList.get(position).getColumns().getDescription());
+                                    bund.putBoolean("isDeeplink", false);
                                     intent.putExtras(bund);
+                                    ComonHelper.notifFlag = false;
+                                    context.startActivity(intent);
                                 }else if (typeId==2){
                                     //video song
-                                    if (AudioPlayerActivity.isPlaying) {
-                                        AudioPlayerActivity.timer.cancel();
-                                        BackgroundSoundService.mPlayer.release();
-                                        Intent intent = new Intent(context, BackgroundSoundService.class);
-                                        ((Activity) context).stopService(intent);
+                                    try {
+                                        if (AudioPlayerActivity.isPlaying) {
+                                            AudioPlayerActivity.timer.cancel();
+                                            BackgroundSoundService.mPlayer.release();
+                                            Intent intent = new Intent(context, BackgroundSoundService.class);
+                                            ((Activity) context).stopService(intent);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
+
 
                                     //video song
                                     Intent intent = new Intent(context, VideoPlayerActivity.class);
@@ -205,6 +282,8 @@ public class RvOfflineSongAdapter extends RecyclerView.Adapter<RvOfflineSongAdap
                                     b.putString("album_name", "");
                                     b.putInt("songId", list.get(position).getColumns().getSongId());
                                     b.putParcelableArrayList("specific_categories", video_itemsList);
+                                    b.putBoolean("isDeeplink", false);
+                                    b.putString("des", video_itemsList.get(position).getColumns().getDescription());
                                     intent.putExtras(b);
                                     Toast.makeText(context, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                                     context.startActivity(intent);

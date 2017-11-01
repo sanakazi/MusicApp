@@ -21,8 +21,10 @@ import com.musicapp.activities.AudioPlayerActivity;
 import com.musicapp.activities.HomeItemClickListActivity;
 import com.musicapp.activities.SongTakeoverActivity;
 import com.musicapp.activities.VideoPlayerActivity;
+import com.musicapp.others.ComonHelper;
 import com.musicapp.pojos.SearchListItem;
 import com.musicapp.pojos.SearchListSectionItem;
+import com.musicapp.service.BackgroundSoundService;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -34,24 +36,23 @@ import java.util.ArrayList;
 public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.ViewHolder> {
     private ArrayList<SearchListItem> list;
     static Context context;
-    String from,playlistName;
+    String from, playlistName;
     int playlistId;
     private LikeUnlikeSongListener likeUnlikeSongListener;
 
 
-    public interface LikeUnlikeSongListener
-    {
-        void onSongLikeUnlike(int playlistId,String from, String songName,String albumName,String thumbnail, int songId, String like);
+    public interface LikeUnlikeSongListener {
+        void onSongLikeUnlike(int playlistId, String from, String songName, String albumName, String thumbnail, int songId, String like, int songTypeId);
 
     }
 
-    public RVBrowsAdapter(ArrayList<SearchListItem> list, Context context,String from,int playlistId,String playlistName) {
+    public RVBrowsAdapter(ArrayList<SearchListItem> list, Context context, String from, int playlistId, String playlistName) {
         this.context = context;
         this.list = list;
-        this.from=from;
-        this.playlistId=playlistId;
-        this.playlistName=playlistName;
-        likeUnlikeSongListener = (LikeUnlikeSongListener)context;
+        this.from = from;
+        this.playlistId = playlistId;
+        this.playlistName = playlistName;
+        likeUnlikeSongListener = (LikeUnlikeSongListener) context;
 
     }
 
@@ -85,12 +86,12 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
         itemViewHolder.tvName.setText(itemsInSection.get(relativePosition).getTypeName());
         // itemViewHolder.tvArtist.setText(itemsInSection.get(relativePosition).getArtistName());
         String imgPath = itemsInSection.get(relativePosition).getThumbnailImage();
-        String songType = itemsInSection.get(relativePosition).getSongTypeId();
+        int songType = itemsInSection.get(relativePosition).getSongTypeId();
 
-        if (songType.matches("0")) {
+        if (songType == 0) {
             itemViewHolder.ivThumbnailOverlayOpacity.setVisibility(View.GONE);
             itemViewHolder.ivThumbnailOverlay.setVisibility(View.GONE);
-        } else if (songType.matches("1")) {
+        } else if (songType == 1) {
             itemViewHolder.ivThumbnailOverlayOpacity.setVisibility(View.VISIBLE);
             itemViewHolder.ivThumbnailOverlay.setVisibility(View.VISIBLE);
             itemViewHolder.ivThumbnailOverlay.setImageResource(R.drawable.audio_android);
@@ -106,8 +107,8 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
             @Override
             public void onClick(View v) {
 
-                String songType = itemsInSection.get(relativePosition).getSongTypeId();
-                if (songType.matches("1")) {
+                int songType = itemsInSection.get(relativePosition).getSongTypeId();
+                if (songType == 1) {
                     String songUrl = itemsInSection.get(relativePosition).getSongUrl();
                     if (songUrl.matches("null")) {
                         songUrl = "";
@@ -118,8 +119,8 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
                         imageUrl = "";
                     }
                     String description = itemsInSection.get(relativePosition).getDescription();
-                    if (description==null || description.matches("null")){
-                        description="";
+                    if (description == null || description.matches("null")) {
+                        description = "";
                     }
 
                     Bundle bundle = new Bundle();
@@ -128,10 +129,49 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
                     bundle.putString("imageUrl", imageUrl);
                     bundle.putString("description", description);
                     bundle.putString("from", "search");
+                    bundle.putBoolean("isDeeplink", false);
+                    try {
+                        if (ComonHelper.timer != null) {
+                            ComonHelper.timer.cancel();
+                        }
+                        ComonHelper.pauseFlag = false;
+                        if (AudioPlayerActivity.isPlaying) {
+                            AudioPlayerActivity.timer.cancel();
+                            BackgroundSoundService.mPlayer.release();
+                            Intent intent = new Intent(context, BackgroundSoundService.class);
+                            ((Activity) context).stopService(intent);
+                        } else if (AudioPlayerActivity.isPause) {
+                            if (AudioPlayerActivity.timer != null) {
+                                AudioPlayerActivity.timer.cancel();
+                            }
+                            if (BackgroundSoundService.mPlayer != null) {
+                                BackgroundSoundService.mPlayer.release();
+                                Intent intent = new Intent(context, BackgroundSoundService.class);
+                                ((Activity) context).stopService(intent);
+                            }
+
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    ComonHelper.notifFlag = false;
                     Intent i = new Intent(context, AudioPlayerActivity.class);
                     i.putExtras(bundle);
                     ((Activity) context).startActivity(i);
-                } else if (songType.matches("2")) {
+                } else if (songType == 2) {
+                    try {
+                        if (AudioPlayerActivity.isPlaying) {
+                            AudioPlayerActivity.timer.cancel();
+                            BackgroundSoundService.mPlayer.release();
+                            Intent intent = new Intent(context, BackgroundSoundService.class);
+                            ((Activity) context).stopService(intent);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
                     String songUrl = itemsInSection.get(relativePosition).getSongUrl();
                     if (songUrl.matches("null")) {
                         songUrl = "";
@@ -142,8 +182,8 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
                         imageUrl = "";
                     }
                     String description = itemsInSection.get(relativePosition).getDescription();
-                    if (description==null || description.matches("null")){
-                        description="";
+                    if (description == null || description.matches("null")) {
+                        description = "";
                     }
                     Bundle bundle = new Bundle();
                     bundle.putString("songUrl", songUrl);
@@ -151,9 +191,10 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
                     bundle.putString("imageUrl", imageUrl);
                     bundle.putString("from", "search");
                     bundle.putString("description", description);
+                    bundle.putBoolean("isDeeplink", false);
                     Intent i = new Intent(context, VideoPlayerActivity.class);
                     i.putExtras(bundle);
-                    Toast.makeText(context,"Pleasse wait we are preparing",Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                     ((Activity) context).startActivity(i);
 
                 } else {
@@ -193,13 +234,12 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
                 context.startActivity(i);*/
 
 
-                likeUnlikeSongListener.onSongLikeUnlike(playlistId,from,itemsInSection.get(relativePosition).getTypeName(),playlistName,
-                        itemsInSection.get(relativePosition).getThumbnailImage(),Integer.parseInt(itemsInSection.get(relativePosition).getId()),  itemsInSection.get(relativePosition).getLike());
+                likeUnlikeSongListener.onSongLikeUnlike(playlistId, from, itemsInSection.get(relativePosition).getTypeName(), playlistName,
+                        itemsInSection.get(relativePosition).getThumbnailImage(), Integer.parseInt(itemsInSection.get(relativePosition).getId()), itemsInSection.get(relativePosition).getLike(), itemsInSection.get(relativePosition).getSongTypeId());
 
 
             }
         });
-
 
 
         //  itemViewHolder.ivThumbnail.setImageResource(R.drawable.download);
@@ -243,7 +283,7 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
 
         final TextView tvName/*,tvArtist*/;
         LinearLayout ivThumbnailOverlayOpacity;
-        final ImageView ivThumbnail, ivThumbnailOverlay,ivDetail;
+        final ImageView ivThumbnail, ivThumbnailOverlay, ivDetail;
         final RelativeLayout rlMain;
 
         public ItemViewHolder(final View itemView) {
@@ -254,7 +294,7 @@ public class RVBrowsAdapter extends SectionedRecyclerViewAdapter<RecyclerView.Vi
             ivThumbnailOverlay = (ImageView) itemView.findViewById(R.id.ivThumbnailOverlay);
             rlMain = (RelativeLayout) itemView.findViewById(R.id.rlMain);
             ivThumbnailOverlayOpacity = (LinearLayout) itemView.findViewById(R.id.ivThumbnailOverlayOpacity);
-            ivDetail=(ImageView) itemView.findViewById(R.id.ivDetail);
+            ivDetail = (ImageView) itemView.findViewById(R.id.ivDetail);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {

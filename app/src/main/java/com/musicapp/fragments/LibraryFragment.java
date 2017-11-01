@@ -4,7 +4,9 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.design.widget.AppBarLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.NestedScrollView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -13,15 +15,20 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.google.gson.reflect.TypeToken;
 import com.musicapp.R;
 import com.musicapp.activities.ArtistActivity;
@@ -56,7 +63,13 @@ public class LibraryFragment  extends Fragment {
     @Bind(R.id.btn_genre) RelativeLayout btn_genre;
     @Bind(R.id.btn_profile) RelativeLayout btn_profile;
     @Bind(R.id.btn_songs) RelativeLayout btn_songs;
+    @Bind(R.id.btn_share)
+    RelativeLayout btn_share;
     @Bind(R.id.rvRecentlyPlayed) RecyclerView rvRecentlyPlayed;
+    @Bind(R.id.progressBar)
+    ProgressBar progressBar;
+    @Bind(R.id.nestedView)
+    NestedScrollView nestedView;
 
     private ArrayList<HomeDetailsJson.DataList> offlineArrayList;
     private ArrayList<HomeDetailsJson.DataList> audio_itemsList=new ArrayList<>();
@@ -64,14 +77,27 @@ public class LibraryFragment  extends Fragment {
     RvOfflineSongAdapter adapter;
     static String deviceId;
     static int userId;
+    private static String TAG = LibraryFragment.class.getSimpleName();
+    AppBarLayout appBarLayout;
+    public String uname;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater,ViewGroup container,Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_library, container, false);
         ButterKnife.bind(this,view);
         userId = PreferencesManager.getInstance(LibraryFragment.this.getActivity()).getUserId();
         deviceId = PreferencesManager.getInstance(LibraryFragment.this.getActivity()).getDeviceId();
-        showRecentlyPlayedSongs();
 
+        if (PreferencesManager.getInstance(getActivity()).getUsername() != "") {
+            uname = PreferencesManager.getInstance(getActivity()).getUsername();
+            nestedView.setVisibility(View.VISIBLE);
+            showRecentlyPlayedSongs();
+        } else {
+            getUserProfileDetailsWebService();
+        }
+
+        // getUserProfileDetailsWebService();
         return  view;
     }
 
@@ -119,6 +145,7 @@ public class LibraryFragment  extends Fragment {
             @Override
             public void onClick(View v) {
                 Intent intent5 = new Intent(getActivity(), UserProfileActivity.class);
+                intent5.putExtra("uname", uname);
                 startActivity(intent5);
             }
         });
@@ -130,6 +157,20 @@ public class LibraryFragment  extends Fragment {
                 startActivity(intent6);
             }
         });
+
+        btn_share.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent i = new Intent(Intent.ACTION_SEND);
+                i.setType("text/plain");
+                i.putExtra(Intent.EXTRA_SUBJECT, "MusicApp");
+                String sAux = "\nLet me recommend you this application\n\n";
+               /* sAux = sAux + "https://play.google.com/store/apps/details?id=Orion.Soft \n\n";*/
+                i.putExtra(Intent.EXTRA_TEXT, sAux);
+                startActivity(Intent.createChooser(i, "choose one"));
+            }
+        });
+
     }
 
 
@@ -160,7 +201,57 @@ public class LibraryFragment  extends Fragment {
         rvRecentlyPlayed.setAdapter(adapter);
     }
 
+    private void getUserProfileDetailsWebService() {
 
+        {
+
+            progressBar.setVisibility(View.VISIBLE);
+            StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.GET_USER_PROFILE_DATA + "UserId=" + userId + "&DeviceId=" + deviceId,
+                    new Response.Listener<String>() {
+                        @Override
+                        public void onResponse(String response) {
+                            Log.w(TAG, response);
+                            try {
+
+                                JsonParser parser = new JsonParser();
+                                JsonObject o = parser.parse(response).getAsJsonObject();
+                                //Log.d("Res",o.toString());
+
+                                JsonObject c = o.getAsJsonObject().get("userDetails").getAsJsonObject();
+                                //  collapsingToolbarLayout.setTitle(c.get("userName").getAsString());
+                                uname = c.get("userName").getAsString();
+                                PreferencesManager.getInstance(getActivity()).saveUsername(uname);
+//
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                            progressBar.setVisibility(View.GONE);
+                            nestedView.setVisibility(View.VISIBLE);
+                            if (getView() != null)
+                                showRecentlyPlayedSongs();
+
+                        }
+                    },
+                    new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            progressBar.setVisibility(View.GONE);
+
+                        }
+                    }) {
+
+
+            };
+
+            stringRequest.setRetryPolicy(new DefaultRetryPolicy(
+                    9000,
+                    DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                    DefaultRetryPolicy.DEFAULT_BACKOFF_MULT));
+
+            MySingleton.getInstance(getActivity()).getRequestQueue().add(stringRequest);
+        }
+    }
 
 
 }

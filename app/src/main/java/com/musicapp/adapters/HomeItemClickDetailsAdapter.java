@@ -11,9 +11,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.toolbox.ImageLoader;
+import com.android.volley.toolbox.NetworkImageView;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.reflect.TypeToken;
@@ -27,6 +30,7 @@ import com.musicapp.others.ComonHelper;
 
 import com.musicapp.pojos.HomeDetailsJson;
 import com.musicapp.service.BackgroundSoundService;
+import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 
 import org.json.JSONObject;
@@ -43,10 +47,11 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
     private static ArrayList<HomeDetailsJson.DataList> offlineSongArrayList;
     private ArrayList<HomeDetailsJson.DataList> audio_itemsList;
     private ArrayList<HomeDetailsJson.DataList> video_itemsList;
+    private ImageLoader mImageLoader;
     String albumName;
     static String from;
     int playlistId;
-    static  boolean duplicationIndex;
+    static boolean duplicationIndex;
     private static final int TYPE_HEADER = 0;
     private static final int TYPE_ITEM = 1;
     private LikeUnlikeSongListener likeUnlikeSongListener;
@@ -56,11 +61,15 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
 
         TextView textView;
         ImageView imageView;
-        LinearLayout latest_song_edit;
+        ImageView latest_song_edit;
         ImageView profile;
         TextView Name;
         TextView email;
-        LinearLayout item_ll, lnrRight;
+        //   LinearLayout  lnrRight;
+        RelativeLayout item_ll;
+        NetworkImageView ivThumbnail;
+        LinearLayout itemImageOverlay_opacity;
+        ImageView itemImageOverlay;
 
 
         public ViewHolder(View itemView, int ViewType) {                 // Creating ViewHolder Constructor with View and viewType As a parameter
@@ -70,12 +79,18 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
             // Here we set the appropriate view in accordance with the the view type as passed when the holder object is created
 
             if (ViewType == TYPE_ITEM) {
-                textView = (TextView) itemView.findViewById(R.id.latest_song_name);
-                item_ll = (LinearLayout) itemView.findViewById(R.id.item_ll);
 
-                lnrRight = (LinearLayout) itemView.findViewById(R.id.lnrRight);
-                latest_song_edit = (LinearLayout) itemView.findViewById(R.id.latest_song_edit);
-                lnrRight.setVisibility(View.VISIBLE);
+
+                itemImageOverlay_opacity = (LinearLayout) itemView.findViewById(R.id.itemImageOverlay_opacity);
+                itemImageOverlay = (ImageView) itemView.findViewById(R.id.itemImageOverlay);
+
+                textView = (TextView) itemView.findViewById(R.id.latest_song_name);
+                item_ll = (RelativeLayout) itemView.findViewById(R.id.item_ll);
+
+                //  lnrRight = (LinearLayout) itemView.findViewById(R.id.lnrRight);
+                latest_song_edit = (ImageView) itemView.findViewById(R.id.latest_song_edit);
+                ivThumbnail = (NetworkImageView) itemView.findViewById(R.id.ivThumbnail);
+                // lnrRight.setVisibility(View.VISIBLE);
                 latest_song_edit.setVisibility(View.VISIBLE);
               /*  if (from.matches("playlist")) {
                     lnrRight.setVisibility(View.VISIBLE);
@@ -98,9 +113,8 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
     }
 
 
-    public interface LikeUnlikeSongListener
-    {
-        void onSongLikeUnlike(int playlistId,String from, String songName,String albumName,String thumbnail, int songId, String like);
+    public interface LikeUnlikeSongListener {
+        void onSongLikeUnlike(int playlistId, String from, String songName, String albumName, String thumbnail, int songId, String like, int songTypeId);
 
     }
 
@@ -113,7 +127,7 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
         this.video_itemsList = video_itemsList;
         this.from = from;
         this.playlistId = playlistId;
-        likeUnlikeSongListener = (LikeUnlikeSongListener)c;
+        likeUnlikeSongListener = (LikeUnlikeSongListener) c;
     }
 
 
@@ -140,6 +154,22 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
         if (holder.Holderid == 1) {
             //   holder.textView.setText(itemsList.get(position-1).getColumns().getSongName());
             holder.textView.setText(itemsList.get(position).getColumns().getSongName());
+
+            mImageLoader = MySingleton.getInstance(c).getImageLoader();
+            String imageUrl = itemsList.get(position).getColumns().getThumbnailImage();
+            Log.w("hie", imageUrl);
+            if (!imageUrl.matches("") || imageUrl != null) {
+                holder.ivThumbnail.setImageUrl(imageUrl, mImageLoader);
+            }
+            if (itemsList.get(position).getColumns().getSongTypeId() == 1) {
+                holder.itemImageOverlay_opacity.setVisibility(View.VISIBLE);
+                holder.itemImageOverlay.setImageResource(R.drawable.audio_android);
+            } else if (itemsList.get(position).getColumns().getSongTypeId() == 2) {
+                holder.itemImageOverlay_opacity.setVisibility(View.VISIBLE);
+                holder.itemImageOverlay.setImageResource(R.drawable.video_android);
+            }
+
+
             Log.w("hie", itemsList.get(position).getColumns().getSongName());
             holder.item_ll.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -147,13 +177,45 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
 
 
                    /*-----to store the offline songs-----*/
-                    ComonHelper.storeOfflineSongLisner(c,position,itemsList);
+                    ComonHelper.storeOfflineSongLisner(c, position, itemsList);
 
 
                     if (itemsList.get(position).getColumns().getSongTypeId() == 1) {
 
 
                         //audio song
+                        ComonHelper.pauseFlag = false;
+
+                        try {
+                            if (ComonHelper.timer != null) {
+                                ComonHelper.timer.cancel();
+                            }
+                            if (AudioPlayerActivity.isPlaying) {
+                                AudioPlayerActivity.timer.cancel();
+                                BackgroundSoundService.mPlayer.release();
+                                Intent intent = new Intent(c, BackgroundSoundService.class);
+                                ((Activity) c).stopService(intent);
+                            } else if (AudioPlayerActivity.isPause) {
+                                if (AudioPlayerActivity.timer != null) {
+                                    AudioPlayerActivity.timer.cancel();
+                                }
+                                if (BackgroundSoundService.mPlayer != null) {
+                                    BackgroundSoundService.mPlayer.release();
+                                    Intent intent = new Intent(c, BackgroundSoundService.class);
+                                    ((Activity) c).stopService(intent);
+                                }
+
+
+                            }
+
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                       /*-----to store the offline songs-----*/
+
+
+                        System.out.println("POSITION OF LIST" + position + " " + audio_itemsList.size());
                         Intent intent = new Intent(c, AudioPlayerActivity.class);
                         Bundle bund = new Bundle();
                         bund.putParcelableArrayList("categories", itemsList);
@@ -161,16 +223,25 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
                         bund.putInt("index", position);
                         bund.putString(AudioPlayerActivity.ALBUM_NAME, albumName);
                         bund.putString("from", "home");
+                        // bund.putString("des",audio_itemsList.get(position).getColumns().getDescription()); // changes on 25 sept 2017
+                        bund.putString("des", itemsList.get(position).getColumns().getDescription());
+                        bund.putBoolean("isDeeplink", false);
                         intent.putExtras(bund);
+                        ComonHelper.notifFlag = false;
                         c.startActivity(intent);
                     } else if (itemsList.get(position).getColumns().getSongTypeId() == 2) {
                         //video song
-                        if (AudioPlayerActivity.isPlaying) {
-                            AudioPlayerActivity.timer.cancel();
-                            BackgroundSoundService.mPlayer.release();
-                            Intent intent = new Intent(c, BackgroundSoundService.class);
-                            ((Activity) c).stopService(intent);
+                        try {
+                            if (AudioPlayerActivity.isPlaying) {
+                                AudioPlayerActivity.timer.cancel();
+                                BackgroundSoundService.mPlayer.release();
+                                Intent intent = new Intent(c, BackgroundSoundService.class);
+                                ((Activity) c).stopService(intent);
+                            }
+                        } catch (Exception e) {
+                            e.printStackTrace();
                         }
+
 
                         //video song
                         Intent intent = new Intent(c, VideoPlayerActivity.class);
@@ -181,6 +252,10 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
                         b.putString("album_name", albumName);
                         b.putInt("songId", itemsList.get(position).getColumns().getSongId());
                         b.putParcelableArrayList("specific_categories", video_itemsList);
+                        b.putBoolean("isDeeplink", false);
+                        //  b.putString("des",video_itemsList.get(position).getColumns().getDescription());// changes on 25 sept 2017
+                        b.putString("des", itemsList.get(position).getColumns().getDescription());
+
                         intent.putExtras(b);
                         Toast.makeText(c, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                         c.startActivity(intent);
@@ -192,8 +267,8 @@ public class HomeItemClickDetailsAdapter extends RecyclerView.Adapter<HomeItemCl
                 @Override
                 public void onClick(View v) {
 
-                    likeUnlikeSongListener.onSongLikeUnlike(playlistId,from,itemsList.get(position).getColumns().getSongName(),albumName,
-                            itemsList.get(position).getColumns().getThumbnailImage(),itemsList.get(position).getColumns().getSongId(),  itemsList.get(position).getColumns().getLike());
+                    likeUnlikeSongListener.onSongLikeUnlike(playlistId, from, itemsList.get(position).getColumns().getSongName(), albumName,
+                            itemsList.get(position).getColumns().getThumbnailImage(), itemsList.get(position).getColumns().getSongId(), itemsList.get(position).getColumns().getLike(), itemsList.get(position).getColumns().getSongTypeId());
 
 
                 }

@@ -13,6 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -26,8 +29,10 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.musicapp.R;
 import com.musicapp.adapters.HomeItemClickListDataAdapter;
+import com.musicapp.others.ComonHelper;
 import com.musicapp.others.Utility;
 import com.musicapp.pojos.HomeDetailsJson;
+import com.musicapp.service.BackgroundSoundService;
 import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 
@@ -61,6 +66,13 @@ public class HomeItemClickListActivity extends AppCompatActivity {
     private ImageLoader mImageLoader;
     int userId;
     String deviceId;
+
+    //bottom player
+    public static RelativeLayout bottomPlayerView;
+    SeekBar seekView;
+    TextView tvPlayName;
+    ImageView ivUp;
+    public static ImageView ivBottomPlay;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -96,16 +108,80 @@ public class HomeItemClickListActivity extends AppCompatActivity {
         progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
         loadBackdrop(coverImage);
-        maincategory_webservice();
+        if (ComonHelper.checkConnection(HomeItemClickListActivity.this)) {
+            maincategory_webservice();
+        } else {
+            Toast.makeText(HomeItemClickListActivity.this, getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
+        }
+
+
+        bottomPlayerEvent();
+
 
     }
 
+    public void bottomPlayerEvent() {
+        bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
+        ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
+        seekView = (SeekBar) findViewById(R.id.seekView);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
+        ivUp = (ImageView) findViewById(R.id.ivUp);
 
+
+        System.out.println("PLAYINGGG" + AudioPlayerActivity.isPlaying);
+        if (AudioPlayerActivity.isPlaying) {
+            bottomPlayerView.setVisibility(View.VISIBLE);
+            ComonHelper comonHelper = new ComonHelper();
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, HomeItemClickListActivity.this);
+        } else {
+            if (AudioPlayerActivity.isPause) {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, HomeItemClickListActivity.this);
+            } else {
+                bottomPlayerView.setVisibility(View.GONE);
+            }
+        }
+
+
+        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, HomeItemClickListActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+    }
     private void maincategory_webservice()
     {
         main_categories_list_containing_elements = new ArrayList<>();
 
-        Log.w(TAG,"Url is " + Utility.homelist_url+cat_id+"&typeId="+type_id+"&UserId="+userId+"&DeviceId="+deviceId);
+        Log.w(TAG, "Url is " + Utility.homelist_url2 + cat_id + "&typeId=" + type_id + "&UserId=" + userId + "&DeviceId=" + deviceId);
         progressBar.setVisibility(View.VISIBLE);
         StringRequest stringRequest = new StringRequest(Request.Method.GET, Utility.homelist_url2+cat_id+"&typeId="+type_id+"&UserId="+userId+"&DeviceId="+deviceId,
                 new Response.Listener<String>() {
@@ -158,10 +234,19 @@ public class HomeItemClickListActivity extends AppCompatActivity {
 
                             }
 
-                            myAdapter = new HomeItemClickListDataAdapter(HomeItemClickListActivity.this, main_categories_list_containing_elements,audio_detail_categories_list,video_detail_categories_list,cat_id_forAllSongs,type_id_forAllSongs,subCategoryId);
+                            myAdapter = new HomeItemClickListDataAdapter(HomeItemClickListActivity.this, main_categories_list_containing_elements, audio_detail_categories_list, video_detail_categories_list, cat_id_forAllSongs, type_id_forAllSongs, subCategoryId, type_name);
                            // MySingleton.getInstance(getActivity()).setHome_categories_list(main_categories_list);
                             recyclerView.setAdapter(myAdapter);
+                        } else if (jsonResponse.getMessage().equalsIgnoreCase("Please Redirect to login page")) {
+                            PreferencesManager.getInstance(HomeItemClickListActivity.this).clearUserPreferences();
+                            Intent i = new Intent(HomeItemClickListActivity.this, AppIntroActivityNew.class);
+                            i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                            startActivity(i);
+                            finish();
+                            ;
                         }
+
+
                       progressBar.setVisibility(View.GONE);
 
                     }
@@ -169,7 +254,7 @@ public class HomeItemClickListActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(HomeItemClickListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(HomeItemClickListActivity.this, getResources().getString(R.string.error_msg), Toast.LENGTH_LONG).show();
                        progressBar.setVisibility(View.GONE);
                     }
                 }){
@@ -213,5 +298,17 @@ public class HomeItemClickListActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        bottomPlayerEvent();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomPlayerEvent();
     }
 }

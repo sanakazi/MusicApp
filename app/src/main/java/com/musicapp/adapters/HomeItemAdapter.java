@@ -41,16 +41,16 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
     private Context mContext;
     int category_Id;
     private ImageLoader mImageLoader;
+    private String categoryName;
 
-
-
-    public HomeItemAdapter(Context context, ArrayList<HomeDetailsJson.DataList> itemsList,ArrayList<HomeDetailsJson.DataList> audio_itemsList, ArrayList<HomeDetailsJson.DataList> video_itemsList,int category_Id) {
+    public HomeItemAdapter(Context context, ArrayList<HomeDetailsJson.DataList> itemsList, ArrayList<HomeDetailsJson.DataList> audio_itemsList, ArrayList<HomeDetailsJson.DataList> video_itemsList, int category_Id, String categoryName) {
         mImageLoader = MySingleton.getInstance(context).getImageLoader();
         this.itemsList = itemsList;
         this.mContext = context;
-        this.category_Id=category_Id;
-        this.audio_itemsList=audio_itemsList;
-        this.video_itemsList=video_itemsList;
+        this.category_Id = category_Id;
+        this.audio_itemsList = audio_itemsList;
+        this.video_itemsList = video_itemsList;
+        this.categoryName = categoryName;
     }
 
     @Override
@@ -61,36 +61,35 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
     }
 
     @Override
-    public void onBindViewHolder(SingleItemRowHolder holder,final int position) {
+    public void onBindViewHolder(SingleItemRowHolder holder, final int position) {
 
 
-        if(itemsList.get(position).getColumns().getSongTypeId()==0){
+        if (itemsList.get(position).getColumns().getSongTypeId() == 0) {
             holder.itemImageOverlay_opacity.setVisibility(View.GONE);
             holder.itemImageOverlay.setVisibility(View.GONE);
-        }
-        else if(itemsList.get(position).getColumns().getSongTypeId()==1){
+        } else if (itemsList.get(position).getColumns().getSongTypeId() == 1) {
             holder.itemImageOverlay_opacity.setVisibility(View.VISIBLE);
             holder.itemImageOverlay.setVisibility(View.VISIBLE);
             holder.itemImageOverlay.setImageResource(R.drawable.audio_android);
-        }
-        else if(itemsList.get(position).getColumns().getSongTypeId()==2){
+        } else if (itemsList.get(position).getColumns().getSongTypeId() == 2) {
             holder.itemImageOverlay_opacity.setVisibility(View.VISIBLE);
             holder.itemImageOverlay.setVisibility(View.VISIBLE);
             holder.itemImageOverlay.setImageResource(R.drawable.video_android);
         }
 
-       holder.tvTitle.setText(itemsList.get(position).getColumns().getTypeName());
+        holder.tvTitle.setText(itemsList.get(position).getColumns().getTypeName());
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                System.out.println("CATEGORRYYYYY"+category_Id);
+                System.out.println("CATEGORRYYYYY" + category_Id);
 
                 if (category_Id == 2) {
-                    ComonHelper.storeOfflineStoreArtist(mContext,position,itemsList,category_Id);
+                    ComonHelper.storeOfflineStoreArtist(mContext, position, itemsList, category_Id);
                 }
 
 
-                if(itemsList.get(position).getColumns().getSongTypeId()==0) {
+                if (itemsList.get(position).getColumns().getSongTypeId() == 0) {
+
                     Intent intent = new Intent(mContext, HomeItemClickListActivity.class);
                     intent.putExtra(HomeItemClickListActivity.CAT_ID, category_Id);
                     intent.putExtra(HomeItemClickListActivity.TYPE_ID, itemsList.get(position).getColumns().getTypeId());
@@ -98,8 +97,7 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
                     intent.putExtra(HomeItemClickListActivity.IMAGE_URL, itemsList.get(position).getColumns().getCoverImage());
                     mContext.startActivity(intent);
 
-                }
-                else if(itemsList.get(position).getColumns().getSongTypeId()==1){
+                } else if (itemsList.get(position).getColumns().getSongTypeId() == 1) {
                     //open audio activity
                 /*   Toast.makeText(mContext,"Audio Activity" ,Toast.LENGTH_SHORT).show();
                    Intent intent = new Intent(mContext, HomeItemClickDetailsActivity.class);
@@ -111,23 +109,56 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
 
 
                    /*-----to store the offline songs-----*/
-                    ComonHelper.storeOfflineSongLisner(mContext,position,itemsList);
+                    System.out.println("SIZE OF THE LISTTT" + audio_itemsList.size());
+                    System.out.println("SIZE OF THE LISTTT" + audio_itemsList.get(0).getColumns().getDescription());
+                    ComonHelper.storeOfflineSongLisner(mContext, position, itemsList);
                     //audio song
+                    System.out.println("AUDIO LIST SIZEEE" + audio_itemsList.size());
+                    ComonHelper.pauseFlag = false;
+
+                    try {
+                        if (ComonHelper.timer != null) {
+                            ComonHelper.timer.cancel();
+                        }
+                        if (AudioPlayerActivity.isPlaying) {
+                            AudioPlayerActivity.timer.cancel();
+                            if (BackgroundSoundService.mPlayer != null) {
+                                BackgroundSoundService.mPlayer.release();
+                            }
+                            Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                            ((Activity) mContext).stopService(intent);
+                        } else if (AudioPlayerActivity.isPause) {
+                            if (AudioPlayerActivity.timer != null) {
+                                AudioPlayerActivity.timer.cancel();
+                            }
+                            if (BackgroundSoundService.mPlayer != null) {
+                                BackgroundSoundService.mPlayer.release();
+                                Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                                ((Activity) mContext).stopService(intent);
+                            }
+
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
                     Intent intent = new Intent(mContext, AudioPlayerActivity.class);
                     Bundle bund = new Bundle();
                     bund.putParcelableArrayList("categories", itemsList);
                     bund.putParcelableArrayList("specific_categories", audio_itemsList);
                     bund.putInt("index", position);
-                    bund.putString(AudioPlayerActivity.ALBUM_NAME,  itemsList.get(position).getColumns().getSongName());
+                    bund.putString(AudioPlayerActivity.ALBUM_NAME, categoryName);
                     bund.putString("from", "home");
+                    bund.putString("des", audio_itemsList.get(position).getColumns().getDescription());
+                    bund.putBoolean("isDeeplink", false);
                     intent.putExtras(bund);
+                    ComonHelper.notifFlag = false;
                     mContext.startActivity(intent);
 
-                }
-                else if(itemsList.get(position).getColumns().getSongTypeId()==2){
+                } else if (itemsList.get(position).getColumns().getSongTypeId() == 2) {
                     //open video activity
                     /*-----to store the offline songs-----*/
-                    ComonHelper.storeOfflineSongLisner(mContext,position,itemsList);
+                    ComonHelper.storeOfflineSongLisner(mContext, position, itemsList);
 
                  /*  Intent intent = new Intent(mContext, HomeItemClickDetailsActivity.class);
                    intent.putExtra(HomeItemClickDetailsActivity.CAT_ID, cat_id_forAllSongs);
@@ -141,12 +172,17 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
 
 
                     //video song
-                    if (AudioPlayerActivity.isPlaying) {
-                        AudioPlayerActivity.timer.cancel();
-                        BackgroundSoundService.mPlayer.release();
-                        Intent intent = new Intent(mContext, BackgroundSoundService.class);
-                        ((Activity) mContext).stopService(intent);
+                    try {
+                        if (AudioPlayerActivity.isPlaying) {
+                            AudioPlayerActivity.timer.cancel();
+                            BackgroundSoundService.mPlayer.release();
+                            Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                            ((Activity) mContext).stopService(intent);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
 
                     //video song
                     Intent intent = new Intent(mContext, VideoPlayerActivity.class);
@@ -154,19 +190,18 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
                     b.putParcelableArrayList("categories", itemsList);
                     b.putInt("index", position);
                     b.putString("from", "home");
-                    b.putString("album_name", itemsList.get(position).getColumns().getSongName());
+                    b.putString("album_name", categoryName);
                     b.putInt("songId", itemsList.get(position).getColumns().getSongId());
                     b.putParcelableArrayList("specific_categories", video_itemsList);
+                    b.putString("des", video_itemsList.get(position).getColumns().getDescription());
+                    b.putBoolean("isDeeplink", false);
                     intent.putExtras(b);
                     Toast.makeText(mContext, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                     mContext.startActivity(intent);
                     Log.w("Song", "adapter " + itemsList.get(position).getColumns().getSongId());
 
 
-
                 }
-
-
 
 
             }
@@ -199,14 +234,15 @@ public class HomeItemAdapter extends RecyclerView.Adapter<HomeItemAdapter.Single
         protected CardView cardView;
         protected LinearLayout itemImageOverlay_opacity;
         protected ImageView itemImageOverlay;
+
         public SingleItemRowHolder(View view) {
             super(view);
 
             this.tvTitle = (TextView) view.findViewById(R.id.tvTitle);
             this.itemImage = (ImageView) view.findViewById(R.id.itemImage);
-            this.cardView = (CardView)view.findViewById(R.id.cardView);
-            this.itemImageOverlay_opacity=(LinearLayout)view.findViewById(R.id.itemImageOverlay_opacity);
-            this.itemImageOverlay=(ImageView)view.findViewById(R.id.itemImageOverlay);
+            this.cardView = (CardView) view.findViewById(R.id.cardView);
+            this.itemImageOverlay_opacity = (LinearLayout) view.findViewById(R.id.itemImageOverlay_opacity);
+            this.itemImageOverlay = (ImageView) view.findViewById(R.id.itemImageOverlay);
 
         }
 

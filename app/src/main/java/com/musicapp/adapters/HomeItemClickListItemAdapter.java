@@ -51,6 +51,7 @@ public class HomeItemClickListItemAdapter extends RecyclerView.Adapter<HomeItemC
     private ImageLoader mImageLoader;
     int cat_id_forAllSongs, type_id_forAllSongs,subCategoryId;
     static boolean duplicateArtistName;
+    String categoryName;
 
     public HomeItemClickListItemAdapter(Context context, ArrayList<HomeDetailsJson.DataList> itemsList,int category_Id ,int cat_id_forAllSongs,int type_id_forAllSongs,int subCategoryId) {
         mImageLoader = MySingleton.getInstance(context).getImageLoader();
@@ -65,7 +66,7 @@ public class HomeItemClickListItemAdapter extends RecyclerView.Adapter<HomeItemC
     }
 
 
-    public HomeItemClickListItemAdapter(Context context, ArrayList<HomeDetailsJson.DataList> itemsList,ArrayList<HomeDetailsJson.DataList> audio_itemsList,ArrayList<HomeDetailsJson.DataList> video_itemsList,int category_Id ,int cat_id_forAllSongs,int type_id_forAllSongs,int subCategoryId) {
+    public HomeItemClickListItemAdapter(Context context, ArrayList<HomeDetailsJson.DataList> itemsList, ArrayList<HomeDetailsJson.DataList> audio_itemsList, ArrayList<HomeDetailsJson.DataList> video_itemsList, int category_Id, String categoryName, int cat_id_forAllSongs, int type_id_forAllSongs, int subCategoryId) {
         mImageLoader = MySingleton.getInstance(context).getImageLoader();
         this.itemsList = itemsList;
         this.mContext = context;
@@ -75,7 +76,7 @@ public class HomeItemClickListItemAdapter extends RecyclerView.Adapter<HomeItemC
         this.subCategoryId=subCategoryId;
         this.audio_itemsList=audio_itemsList;
         this.video_itemsList=video_itemsList;
-
+        this.categoryName = categoryName;
     }
     
 
@@ -148,14 +149,45 @@ public class HomeItemClickListItemAdapter extends RecyclerView.Adapter<HomeItemC
                    //store offline song here
 
                    //audio song
+                   try {
+                       if (ComonHelper.timer != null) {
+                           ComonHelper.timer.cancel();
+                       }
+                       ComonHelper.pauseFlag = false;
+                       if (AudioPlayerActivity.isPlaying) {
+                           AudioPlayerActivity.timer.cancel();
+                           BackgroundSoundService.mPlayer.release();
+                           Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                           ((Activity) mContext).stopService(intent);
+                       } else if (AudioPlayerActivity.isPause) {
+                           if (AudioPlayerActivity.timer != null) {
+                               AudioPlayerActivity.timer.cancel();
+                           }
+                           if (BackgroundSoundService.mPlayer != null) {
+                               BackgroundSoundService.mPlayer.release();
+                               Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                               ((Activity) mContext).stopService(intent);
+                           }
+
+
+                       }
+                   } catch (Exception e) {
+                       e.printStackTrace();
+                   }
+
+
                    Intent intent = new Intent(mContext, AudioPlayerActivity.class);
                    Bundle bund = new Bundle();
                    bund.putParcelableArrayList("categories", itemsList);
                    bund.putParcelableArrayList("specific_categories", audio_itemsList);
                    bund.putInt("index", position);
-                   bund.putString(AudioPlayerActivity.ALBUM_NAME,  itemsList.get(position).getColumns().getSongName());
+                   //  bund.putString(AudioPlayerActivity.ALBUM_NAME,  itemsList.get(position).getColumns().getSongName());
+                   bund.putString(AudioPlayerActivity.ALBUM_NAME, categoryName);
                    bund.putString("from", "home");
+                   bund.putString("des", audio_itemsList.get(position).getColumns().getDescription());
+                   bund.putBoolean("isDeeplink", false);
                    intent.putExtras(bund);
+                   ComonHelper.notifFlag = false;
                    mContext.startActivity(intent);
 
                 }
@@ -178,12 +210,17 @@ public class HomeItemClickListItemAdapter extends RecyclerView.Adapter<HomeItemC
 
 
                    //video song
-                   if (AudioPlayerActivity.isPlaying) {
-                       AudioPlayerActivity.timer.cancel();
-                       BackgroundSoundService.mPlayer.release();
-                       Intent intent = new Intent(mContext, BackgroundSoundService.class);
-                       ((Activity) mContext).stopService(intent);
+                   try {
+                       if (AudioPlayerActivity.isPlaying) {
+                           AudioPlayerActivity.timer.cancel();
+                           BackgroundSoundService.mPlayer.release();
+                           Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                           ((Activity) mContext).stopService(intent);
+                       }
+                   } catch (Exception e) {
+                       e.printStackTrace();
                    }
+
 
                    //video song
                    Intent intent = new Intent(mContext, VideoPlayerActivity.class);
@@ -191,9 +228,13 @@ public class HomeItemClickListItemAdapter extends RecyclerView.Adapter<HomeItemC
                    b.putParcelableArrayList("categories", itemsList);
                    b.putInt("index", position);
                    b.putString("from", "home");
-                   b.putString("album_name", itemsList.get(position).getColumns().getSongName());
+                   //  b.putString("album_name", itemsList.get(position).getColumns().getSongName());
+                   System.out.println("ALBUM NAME" + categoryName);
+                   b.putString("album_name", categoryName);
                    b.putInt("songId", itemsList.get(position).getColumns().getSongId());
                    b.putParcelableArrayList("specific_categories", video_itemsList);
+                   b.putBoolean("isDeeplink", false);
+                   b.putString("des", video_itemsList.get(position).getColumns().getDescription());
                    intent.putExtras(b);
                    Toast.makeText(mContext, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                    mContext.startActivity(intent);

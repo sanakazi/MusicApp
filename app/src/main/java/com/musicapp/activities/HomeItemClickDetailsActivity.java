@@ -11,7 +11,11 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -25,8 +29,10 @@ import com.musicapp.adapters.HomeItemClickDetailsAdapter;
 
 import com.musicapp.custom.HeaderView;
 
+import com.musicapp.others.ComonHelper;
 import com.musicapp.others.Utility;
 import com.musicapp.pojos.HomeDetailsJson;
+import com.musicapp.service.BackgroundSoundService;
 import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 
@@ -65,6 +71,14 @@ public class HomeItemClickDetailsActivity extends AppCompatActivity implements A
     String  songCount=" 0 Song";
     int userId;
     String deviceId;
+
+    //bottom player
+    public static RelativeLayout bottomPlayerView;
+    SeekBar seekView;
+    TextView tvPlayName;
+    ImageView ivUp;
+    public static ImageView ivBottomPlay;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,7 +115,71 @@ public class HomeItemClickDetailsActivity extends AppCompatActivity implements A
 
         toolbarHeaderView.bindTo(type_name, songCount);
         floatHeaderView.bindTo(type_name, songCount);
+        bottomPlayerEvents();
+
     }
+
+    public void bottomPlayerEvents() {
+
+        bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
+        ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
+        seekView = (SeekBar) findViewById(R.id.seekView);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
+        ivUp = (ImageView) findViewById(R.id.ivUp);
+
+
+        System.out.println("PLAYINGGG" + AudioPlayerActivity.isPlaying);
+        if (AudioPlayerActivity.isPlaying) {
+            bottomPlayerView.setVisibility(View.VISIBLE);
+            ComonHelper comonHelper = new ComonHelper();
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, HomeItemClickDetailsActivity.this);
+        } else {
+            if (AudioPlayerActivity.isPause) {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, HomeItemClickDetailsActivity.this);
+            } else {
+                bottomPlayerView.setVisibility(View.GONE);
+            }
+        }
+
+
+        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, HomeItemClickDetailsActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+    }
+
 
     @Override
     public void onOffsetChanged(AppBarLayout appBarLayout, int offset) {
@@ -200,7 +278,7 @@ public class HomeItemClickDetailsActivity extends AppCompatActivity implements A
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(HomeItemClickDetailsActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(HomeItemClickDetailsActivity.this, getResources().getString(R.string.error_msg), Toast.LENGTH_LONG).show();
                         progressBar.setVisibility(View.GONE);
                     }
                 }){
@@ -221,7 +299,7 @@ public class HomeItemClickDetailsActivity extends AppCompatActivity implements A
     }
 
     @Override
-    public void onSongLikeUnlike(int playlistId, String from, String songName, String albumName, String thumbnail, int songId, String like) {
+    public void onSongLikeUnlike(int playlistId, String from, String songName, String albumName, String thumbnail, int songId, String like, int songTypeId) {
 
         Bundle bundle = new Bundle();
         bundle.putInt("playlistId", playlistId);
@@ -231,6 +309,7 @@ public class HomeItemClickDetailsActivity extends AppCompatActivity implements A
         bundle.putString("thumbnail", thumbnail);
         bundle.putInt("songId", songId);
         bundle.putString("Like",like);
+        bundle.putInt("type", songTypeId);
         Intent i = new Intent(HomeItemClickDetailsActivity.this, SongTakeoverActivity.class);
         i.putExtras(bundle);
         startActivityForResult(i,1);
@@ -244,8 +323,25 @@ public class HomeItemClickDetailsActivity extends AppCompatActivity implements A
         else if(requestCode==1)
         {
             Log.w(TAG,"request is 1");
-            maincategory_webservice();
+            if (ComonHelper.checkConnection(HomeItemClickDetailsActivity.this)) {
+                maincategory_webservice();
+            } else {
+                Toast.makeText(HomeItemClickDetailsActivity.this, getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
+            }
         }
 
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        bottomPlayerEvents();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomPlayerEvents();
     }
 }

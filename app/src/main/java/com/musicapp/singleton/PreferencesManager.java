@@ -9,6 +9,8 @@ import android.content.SharedPreferences;
 public class PreferencesManager {
     public static final String PREF_NAME = "myPrefs";
     public static final String PREFKEY_USER_ID = "user_id";
+    public static final String PREFKEY_USERNAME = "user_name";
+    public static final String PREFKEY_IS_LOGEDIN = "loged_in";
     public static final String PREFKEY_DEVICE_ID = "device_id";
     public static final String PREFKEY_IS_SOCIAL_LOGIN = "IsSocialLogin";
     private static final String FIRST_RUN = "FIRST_RUN";
@@ -17,6 +19,7 @@ public class PreferencesManager {
     private static final String RECENT_PLAYED_SONG_ARRAY = "recently_played_songs";
     private static final String RECENT_PLAYED_ARTIST_ARRAY = "recently_played_artsit";
     private static final String IS_OFFLINE_ARTIST_ARRAY_CREATED = "is_artist_array_created";
+    private static final String PREFKEY_DEVICE_TOKEN = "regId";
     private SharedPreferences sPref;
     private static PreferencesManager preferencesManager;
 
@@ -40,6 +43,14 @@ public class PreferencesManager {
         sPref.edit().putInt(PREFKEY_USER_ID, id).commit();
     }
 
+    public boolean getIsLoggedIn() {
+        return (sPref.getBoolean(PREFKEY_IS_LOGEDIN, false));
+    }
+
+    public void saveIsLoggedIn(boolean isLoggedIn) {
+        sPref.edit().putBoolean(PREFKEY_IS_LOGEDIN, isLoggedIn).commit();
+    }
+
 
     public boolean getIsOfflineSongCreated() {
         return (sPref.getBoolean(IS_OFFLINE_SONG_ARRAY_CREATED, false));
@@ -56,6 +67,16 @@ public class PreferencesManager {
     public void saveOfflineSong(String songs) {
         sPref.edit().putString(RECENT_PLAYED_SONG_ARRAY, songs).commit();
     }
+
+
+    public String getUsername() {
+        return (sPref.getString(PREFKEY_USERNAME, ""));
+    }
+
+    public void saveUsername(String userName) {
+        sPref.edit().putString(PREFKEY_USERNAME, userName).commit();
+    }
+
 
     public String getRecentlyPlayedArtist() {
         return (sPref.getString(RECENT_PLAYED_ARTIST_ARRAY, ""));
@@ -114,6 +135,14 @@ public class PreferencesManager {
     }
 
 
+    public String getDeviceToken() {
+        return (sPref.getString(PREFKEY_DEVICE_TOKEN, ""));
+    }
+
+    public void saveDeviceToken(String device_token) {
+        sPref.edit().putString(PREFKEY_DEVICE_TOKEN, device_token).commit();
+    }
+
     public void clearUserPreferences() {
 
         SharedPreferences.Editor edit = sPref.edit();
@@ -123,7 +152,10 @@ public class PreferencesManager {
         edit.putBoolean(IS_OFFLINE_SONG_ARRAY_CREATED,false);
         edit.putString(RECENT_PLAYED_ARTIST_ARRAY,"");
         edit.putString(RECENT_PLAYED_SONG_ARRAY,"");
+        edit.putBoolean(PREFKEY_IS_LOGEDIN, false);
+        edit.putString(PREFKEY_USERNAME, "");
         edit.commit();
+
     }
 
 }

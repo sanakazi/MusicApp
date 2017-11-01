@@ -38,6 +38,7 @@ public class Utility {
     public static final String CHECK_SUBSCRIPTION_URL = BASE_URL_1+"CheckUserSubscription";
     public static final String BROWSE_ITEM_CLICK = baseUrl+"BrowseData?";
     public static final String LIVE_STREAM_URL = baseUrl+"ConcertData?";
+    public static final String BROWSE_URL = baseUrl + "getCategoryListForBrowse?";
 
     public static String creatPlaylist = BASE_URL_1 + "CreateUserPlaylist";
     public static String renamePlaylist = BASE_URL_1 + "RenamePlaylist";

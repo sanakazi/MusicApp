@@ -11,7 +11,7 @@
     <dimen name="header_view_end_margin_left">40dp</dimen>
     <dimen name="header_view_end_margin_right">14dp</dimen>
     <dimen name="header_view_start_margin_bottom">14dp</dimen>
-    <dimen name="header_view_start_text_size">32sp</dimen>
+    <dimen name="header_view_start_text_size">24sp</dimen>
     <dimen name="header_view_end_text_size">18sp</dimen>
 
 
@@ -34,6 +34,7 @@
     <dimen name="dimen_70">70dp</dimen>
     <dimen name="dimen_250">250dp</dimen>
     <dimen name="dimen_300">300dp</dimen>
+    <dimen name="dimen_370">370dp</dimen>
 
     <!--Text dimen-->
     <dimen name="txt_12">12sp</dimen>

@@ -31,7 +31,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_centerInParent="true"
-            android:text="Atma by colonial cousin"
+            android:text=""
             android:id="@+id/tvPlayName"
             android:textColor="@color/background_black_light"/>
         <ImageView

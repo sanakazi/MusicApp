@@ -28,9 +28,10 @@ public class HomeItemClickListDataAdapter extends RecyclerView.Adapter<HomeItemC
     private ArrayList<HomeDetailsJson.DataList> video_itemsList;
     private Context mContext;
     int cat_id_forAllSongs, type_id_forAllSongs,subCategoryId;
+    String subCategoryName;
 
 
-    public HomeItemClickListDataAdapter(Context context, ArrayList<HomeDetailsJson.Categories> dataList,ArrayList<HomeDetailsJson.DataList> audio_itemsList, ArrayList<HomeDetailsJson.DataList> video_itemsList,int cat_id_forAllSongs,int type_id_forAllSongs,int subCategoryId) {
+    public HomeItemClickListDataAdapter(Context context, ArrayList<HomeDetailsJson.Categories> dataList, ArrayList<HomeDetailsJson.DataList> audio_itemsList, ArrayList<HomeDetailsJson.DataList> video_itemsList, int cat_id_forAllSongs, int type_id_forAllSongs, int subCategoryId, String subCategoryName) {
         this.dataList = dataList;
         this.mContext = context;
         this.cat_id_forAllSongs=cat_id_forAllSongs;
@@ -38,6 +39,7 @@ public class HomeItemClickListDataAdapter extends RecyclerView.Adapter<HomeItemC
         this.subCategoryId=subCategoryId;
         this.audio_itemsList=audio_itemsList;
         this.video_itemsList=video_itemsList;
+        this.subCategoryName = subCategoryName;
 
     }
 
@@ -59,7 +61,7 @@ public class HomeItemClickListDataAdapter extends RecyclerView.Adapter<HomeItemC
         itemRowHolder.itemTitle.setText(sectionName);
 
 
-            HomeItemClickListItemAdapter itemListDataAdapter = new HomeItemClickListItemAdapter(mContext, singleSectionItems,audio_itemsList,video_itemsList, dataList.get(i).getCategoryId(), cat_id_forAllSongs, type_id_forAllSongs, subCategoryId);
+        HomeItemClickListItemAdapter itemListDataAdapter = new HomeItemClickListItemAdapter(mContext, singleSectionItems, audio_itemsList, video_itemsList, dataList.get(i).getCategoryId(), subCategoryName, cat_id_forAllSongs, type_id_forAllSongs, subCategoryId);
 
             itemRowHolder.recycler_view_list.setAdapter(itemListDataAdapter);
 

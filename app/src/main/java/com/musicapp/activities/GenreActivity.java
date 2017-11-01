@@ -30,7 +30,7 @@ public class GenreActivity extends AppCompatActivity implements GenreAdapter.Gen
     @Bind(R.id.btn_manage_genres) Button btn_manage_genres;
 
     private static final String TAG=GenreActivity.class.getSimpleName();
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
     TextView tvPlayName;
     ImageView ivUp;
@@ -73,13 +73,13 @@ public class GenreActivity extends AppCompatActivity implements GenreAdapter.Gen
         if (AudioPlayerActivity.isPlaying) {
             bottomPlayerView.setVisibility(View.VISIBLE);
             ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, GenreActivity.this);
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, GenreActivity.this);
         } else {
             if (AudioPlayerActivity.isPause) {
                 bottomPlayerView.setVisibility(View.VISIBLE);
                 ivBottomPlay.setImageResource(R.drawable.pause_orange);
                 ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, GenreActivity.this);
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, GenreActivity.this);
             } else {
                 bottomPlayerView.setVisibility(View.GONE);
             }
@@ -99,12 +99,22 @@ public class GenreActivity extends AppCompatActivity implements GenreAdapter.Gen
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BackgroundSoundService.mPlayer.seekTo(seekView.getProgress());
-                ComonHelper.timer.cancel();
-                ComonHelper.updateSeekProgressTimer(seekView, GenreActivity.this);
-                AudioPlayerActivity.timer.cancel();
-                AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
-                audioPlayerActivity.updateProgressBar();
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, GenreActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
 
@@ -143,6 +153,17 @@ public class GenreActivity extends AppCompatActivity implements GenreAdapter.Gen
         return true;
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        events();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        events();
+    }
 
     @Override
     public void onGenreClick(int catId, int typeId, String typeName, String coverImage) {

@@ -13,6 +13,9 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
+import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.DefaultRetryPolicy;
@@ -25,8 +28,10 @@ import com.bumptech.glide.Glide;
 import com.google.gson.Gson;
 import com.musicapp.R;
 import com.musicapp.adapters.BrowseItemListDataAdapter;
+import com.musicapp.others.ComonHelper;
 import com.musicapp.others.Utility;
 import com.musicapp.pojos.HomeDetailsJson;
+import com.musicapp.service.BackgroundSoundService;
 import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 
@@ -58,10 +63,17 @@ import butterknife.ButterKnife;
         private ImageLoader mImageLoader;
         int userId;
         String deviceId;
+
+        public static RelativeLayout bottomPlayerView;
+        SeekBar seekView;
+        TextView tvPlayName;
+        ImageView ivUp;
+        public static ImageView ivBottomPlay;
+
         @Override
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
-            setContentView(R.layout.activity_home_item_click_list);
+            setContentView(R.layout.activity_browse_item_list);
             userId = PreferencesManager.getInstance(BrowseItemListActivity.this).getUserId();
             deviceId = PreferencesManager.getInstance(BrowseItemListActivity.this).getDeviceId();
 
@@ -86,16 +98,83 @@ import butterknife.ButterKnife;
             setSupportActionBar(toolbar);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-            CollapsingToolbarLayout collapsingToolbar =
+           /* CollapsingToolbarLayout collapsingToolbar =
                     (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
-            collapsingToolbar.setTitle(category_name);
+            collapsingToolbar.setTitle(category_name);*/
+            setTitle(category_name);
             progressBar = (ProgressBar)findViewById(R.id.progressBar);
 
-            loadBackdrop(coverImage);
-            maincategory_webservice();
+            // loadBackdrop(coverImage);
+
+            if (ComonHelper.checkConnection(BrowseItemListActivity.this)) {
+                maincategory_webservice();
+            } else {
+                Toast.makeText(BrowseItemListActivity.this, getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
+            }
+            bottomPlayerEvents();
 
         }
 
+
+        public void bottomPlayerEvents() {
+            bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
+            ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
+            seekView = (SeekBar) findViewById(R.id.seekView);
+            tvPlayName = (TextView) findViewById(R.id.tvPlayName);
+            ivUp = (ImageView) findViewById(R.id.ivUp);
+
+
+            System.out.println("PLAYINGGG" + AudioPlayerActivity.isPlaying);
+            if (AudioPlayerActivity.isPlaying) {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, BrowseItemListActivity.this);
+            } else {
+                if (AudioPlayerActivity.isPause) {
+                    bottomPlayerView.setVisibility(View.VISIBLE);
+                    ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                    ComonHelper comonHelper = new ComonHelper();
+                    comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, BrowseItemListActivity.this);
+                } else {
+                    bottomPlayerView.setVisibility(View.GONE);
+                }
+            }
+
+
+            seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+                @Override
+                public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+                }
+
+                @Override
+                public void onStartTrackingTouch(SeekBar seekBar) {
+
+                }
+
+                @Override
+                public void onStopTrackingTouch(SeekBar seekBar) {
+                    try {
+                        if (ComonHelper.timer != null) {
+                            ComonHelper.timer.cancel();
+                            ComonHelper.timer = null;
+                        }
+                        BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                        ComonHelper.updateSeekProgressTimer(seekBar, BrowseItemListActivity.this);
+                        if (AudioPlayerActivity.timer != null) {
+                            AudioPlayerActivity.timer.cancel();
+                            AudioPlayerActivity.timer = null;
+                        }
+                        AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                        audioPlayerActivity.updateProgressBar();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+                }
+            });
+        }
 
         private void maincategory_webservice()
         {
@@ -128,10 +207,19 @@ import butterknife.ButterKnife;
 
                                 }
 
+
                                 myAdapter = new BrowseItemListDataAdapter(BrowseItemListActivity.this, main_categories_list_containing_elements,cat_id);
                                 // MySingleton.getInstance(getActivity()).setHome_categories_list(main_categories_list);
                                 recyclerView.setAdapter(myAdapter);
+                            } else if (jsonResponse.getMessage().equalsIgnoreCase("Please Redirect to login page")) {
+                                PreferencesManager.getInstance(BrowseItemListActivity.this).clearUserPreferences();
+                                Intent i = new Intent(BrowseItemListActivity.this, AppIntroActivityNew.class);
+                                i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(i);
+                                finish();
+                                ;
                             }
+
                             progressBar.setVisibility(View.GONE);
 
                         }
@@ -139,7 +227,7 @@ import butterknife.ButterKnife;
                     new Response.ErrorListener() {
                         @Override
                         public void onErrorResponse(VolleyError error) {
-                            Toast.makeText(BrowseItemListActivity.this,error.toString(),Toast.LENGTH_LONG).show();
+                            Toast.makeText(BrowseItemListActivity.this, getResources().getString(R.string.error_msg), Toast.LENGTH_LONG).show();
                             progressBar.setVisibility(View.GONE);
                         }
                     }){
@@ -162,10 +250,10 @@ import butterknife.ButterKnife;
             }
         }
 
-        private void loadBackdrop(String coverImage) {
+      /*  private void loadBackdrop(String coverImage) {
             final ImageView imageView = (ImageView) findViewById(R.id.backdrop);
             Glide.with(this).load(coverImage).centerCrop().into(imageView);
-        }
+        }*/
 
         @Override
         public void onBackPressed() {
@@ -183,5 +271,17 @@ import butterknife.ButterKnife;
                     break;
             }
             return true;
+        }
+
+        @Override
+        protected void onRestart() {
+            super.onRestart();
+            bottomPlayerEvents();
+        }
+
+        @Override
+        protected void onResume() {
+            super.onResume();
+            bottomPlayerEvents();
         }
     }

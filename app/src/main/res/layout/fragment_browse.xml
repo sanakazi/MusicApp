@@ -17,18 +17,20 @@
         android:gravity="center"
         android:weightSum="1">
 
-        <TextView
-            android:clickable="false"
-            android:padding="@dimen/dimen_3"
+        <EditText
             android:layout_width="0dp"
-            android:layout_weight="0.9"
+            android:layout_weight=".9"
+            android:padding="@dimen/dimen_5"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:id="@+id/edtSerach"
-            android:text="@string/txt_search"
-            android:textSize="20sp"
+            android:id="@+id/edtSearch"
+            android:hint="@string/txt_search"
             android:textColorHint="@android:color/white"
+            android:textSize="15sp"
             android:textColor="@android:color/white"
+            android:layout_marginLeft="5dp"
+            android:singleLine="true"
+            android:imeOptions="actionSearch"
             android:background="@android:color/transparent" />
 
         <ImageView
@@ -44,15 +46,25 @@
 
 
     </LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rvSearchList"
-        android:scrollbars="vertical"
-        android:layout_marginLeft="@dimen/dimen_5"
-        android:layout_marginRight="@dimen/dimen_5"
-        android:layout_marginTop="@dimen/dimen_10"
+
+    <android.support.v4.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
+        android:id="@+id/refresh"
         android:layout_below="@+id/lnrSearch"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rvSearchList"
+            android:scrollbars="vertical"
+            android:layout_marginLeft="@dimen/dimen_5"
+            android:layout_marginRight="@dimen/dimen_5"
+            android:layout_marginTop="@dimen/dimen_10"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
 
     <ProgressBar
         android:id="@+id/progressBar"

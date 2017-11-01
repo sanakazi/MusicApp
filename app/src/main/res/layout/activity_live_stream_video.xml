@@ -3,11 +3,14 @@
     android:layout_width="match_parent"
     android:background="@drawable/bg_video"
     android:keepScreenOn="true"
+    android:layerType="software"
     android:layout_height="match_parent">
 
 
     <RelativeLayout
         android:layout_width="match_parent"
+        android:id="@+id/relative"
+        android:orientation="vertical"
         android:layout_height="match_parent">
 
 
@@ -16,9 +19,9 @@
             android:id="@+id/headers"/>
 
 
-        <FrameLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:id="@+id/relative"
+            android:id="@+id/frame"
             android:layout_below="@+id/headers"
             android:layout_marginTop="20dp"
             android:layout_height="wrap_content">
@@ -28,26 +31,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="200dp" />
 
-
             <ImageView
                 android:layout_width="wrap_content"
                 android:src="@drawable/maximize"
                 android:id="@+id/maximizes"
-                android:layout_marginBottom="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_alignParentRight="true"
                 android:layout_marginRight="8dp"
-                android:layout_gravity="bottom|end"
                 android:layout_height="wrap_content" />
 
+            <ProgressBar
+                android:id="@+id/progressBar"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerInParent="true"
+                android:indeterminateDrawable="@drawable/customize_progress" />
 
-            <!-- <SeekBar
-                 android:layout_width="match_parent"
-                 android:layout_gravity="bottom"
-                 android:id="@+id/seekbar"
-                 style="?android:attr/progressBarStyleHorizontal"
-                 android:layout_height="wrap_content" />-->
 
-        </FrameLayout>
-
+        </RelativeLayout>
 
 
         <LinearLayout
@@ -55,7 +57,7 @@
             android:orientation="horizontal"
             android:layout_marginTop="20dp"
             android:id="@+id/linear"
-            android:layout_below="@+id/relative"
+            android:layout_below="@+id/frame"
             android:layout_height="wrap_content">
 
 
@@ -72,13 +74,13 @@
 
 
             <ImageView
-                android:layout_width="20dp"
+                android:layout_width="wrap_content"
                 android:layout_gravity="center"
                 android:background="@android:color/transparent"
                 android:src="@drawable/detail"
                 android:id="@+id/tvDetail"
                 android:layout_marginRight="10dp"
-                android:layout_height="30dp" />
+                android:layout_height="wrap_content" />
 
 
         </LinearLayout>
@@ -97,16 +99,17 @@
                 android:layout_width="match_parent"
                 android:id="@+id/seekbar"
                 android:layout_gravity="bottom"
-                android:thumbTint="@android:color/white"
-                android:progressTint="#0067C0"
+                android:progressDrawable="@drawable/custome_seek_bar"
+                android:thumb="@drawable/video_seekbar_thumb"
                 style="?android:attr/progressBarStyleHorizontal"
                 android:layout_height="wrap_content" />
 
 
             <TextView
+
                 android:layout_width="wrap_content"
                 android:layout_below="@+id/seekbar"
-                android:text="02:05"
+                android:text="00:00"
                 android:textColor="#03A8D6"
                 android:id="@+id/starttime"
                 android:layout_marginLeft="10dp"
@@ -117,7 +120,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_below="@+id/seekbar"
-                android:text="03:25"
+                android:text="00:00"
                 android:id="@+id/endtime"
                 android:textColor="#03A8D6"
                 android:layout_marginRight="10dp"
@@ -125,23 +128,26 @@
                 android:layout_alignParentRight="true"
                 android:layout_height="wrap_content" />
 
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:layout_width="wrap_content"
-            android:layout_below="@+id/seeklayout"
-            android:layout_marginTop="5dp"
-            android:layout_centerInParent="true"
-            android:layout_height="wrap_content">
-
-            <ImageView
+            <RelativeLayout
                 android:layout_width="wrap_content"
-                android:src="@drawable/stop_video"
-                android:id="@+id/media"
-                android:layout_height="wrap_content" />
+                android:layout_marginTop="5dp"
+                android:layout_centerInParent="true"
+                android:layout_below="@+id/seekbar"
+                android:layout_height="wrap_content">
+
+                <ImageView
+                    android:layout_width="wrap_content"
+                    android:src="@drawable/play_video_vert"
+                    android:id="@+id/media"
+                    android:clickable="false"
+                    android:layout_height="wrap_content" />
+
+            </RelativeLayout>
+
+
 
         </RelativeLayout>
+
 
     </RelativeLayout>
 
@@ -351,7 +357,7 @@
                 </ScrollView>
 
                 <ProgressBar
-                    android:id="@+id/progressBar"
+                    android:id="@+id/progressBarIn"
                     style="?android:attr/progressBarStyleLarge"
                     android:layout_width="70dp"
                     android:layout_height="70dp"

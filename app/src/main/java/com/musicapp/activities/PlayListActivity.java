@@ -42,6 +42,7 @@ import com.musicapp.fragments.BrowseFragment;
 import com.musicapp.others.ComonHelper;
 import com.musicapp.others.Utility;
 import com.musicapp.pojos.PlaylistItem;
+import com.musicapp.service.BackgroundSoundService;
 import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 
@@ -72,8 +73,9 @@ public class PlayListActivity extends AppCompatActivity implements RvPlaylistAda
 
     //for bottom player
     ImageView ivUp, ivBottomPlay;
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
+    TextView tvPlayName;
 
     //for create list popup
     EditText edtPopupName;
@@ -225,22 +227,59 @@ public class PlayListActivity extends AppCompatActivity implements RvPlaylistAda
         //for bottom view
         bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
         seekView = (SeekBar) findViewById(R.id.seekView);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
         ivUp = (ImageView) findViewById(R.id.ivUp);
         ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
         if (AudioPlayerActivity.isPlaying) {
             bottomPlayerView.setVisibility(View.VISIBLE);
             ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, playListActivity);
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, playListActivity);
         } else {
             if (AudioPlayerActivity.isPause) {
                 bottomPlayerView.setVisibility(View.VISIBLE);
                 ivBottomPlay.setImageResource(R.drawable.pause_orange);
                 ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, playListActivity);
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, playListActivity);
             } else {
                 bottomPlayerView.setVisibility(View.GONE);
             }
         }
+
+
+        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, PlayListActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+
     }
 
     private void getData() {
@@ -526,11 +565,21 @@ public class PlayListActivity extends AppCompatActivity implements RvPlaylistAda
         Bundle bundle=new Bundle();
         bundle.putInt("playlistId",playlistId);
         bundle.putString("playlistName",playlistname);
-        bundle.putString("thumbnail","");
+        bundle.putString("thumbnail", thumbnail);
         Intent i = new Intent(PlayListActivity.this, PlaylistTakeOverActivity.class);
         i.putExtras(bundle);
         startActivityForResult(i,1);
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        bottomPlayerListner();
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomPlayerListner();
+    }
 }

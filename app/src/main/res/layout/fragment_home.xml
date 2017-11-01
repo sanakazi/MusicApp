@@ -8,15 +8,23 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-    <android.support.v7.widget.RecyclerView
-        android:padding="5dp"
-        android:id="@+id/recyclerView"
-        android:scrollbars="vertical"
-        android:background="@color/home_fragment_bg"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
 
-    </android.support.v7.widget.RecyclerView>
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:id="@+id/refresh"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.RecyclerView
+                android:padding="5dp"
+                android:id="@+id/recyclerView"
+                android:scrollbars="vertical"
+                android:background="@color/home_fragment_bg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+            </android.support.v7.widget.RecyclerView>
+
+        </android.support.v4.widget.SwipeRefreshLayout>
 
         <ProgressBar
             android:id="@+id/progressBar"

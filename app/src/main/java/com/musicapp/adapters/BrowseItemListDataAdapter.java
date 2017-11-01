@@ -82,7 +82,7 @@ public class BrowseItemListDataAdapter extends RecyclerView.Adapter<BrowseItemLi
         }
         //endregion
 
-        BrowseItemListItemAdapter itemListDataAdapter = new BrowseItemListItemAdapter(mContext, singleSectionItems,audio_itemsList,video_itemsList, categoryId);
+        BrowseItemListItemAdapter itemListDataAdapter = new BrowseItemListItemAdapter(mContext, singleSectionItems, audio_itemsList, video_itemsList, categoryId, dataList.get(position).getCategoryName());
         itemRowHolder.recycler_view_list.setAdapter(itemListDataAdapter);
 
 

@@ -108,6 +108,36 @@ public class SongsLikedAdapter extends RecyclerView.Adapter<SongsLikedAdapter.Si
                 System.out.println("SIZE OF LISSSTTT"+audio_itemsList.size());
                 if (typeId == 1) {
                     //audio song
+                    ComonHelper.pauseFlag = false;
+                    try {
+                        if (ComonHelper.timer != null) {
+                            ComonHelper.timer.cancel();
+                        }
+
+                        if (AudioPlayerActivity.isPlaying) {
+                            AudioPlayerActivity.timer.cancel();
+                            BackgroundSoundService.mPlayer.release();
+                            Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                            ((Activity) mContext).stopService(intent);
+                        } else if (AudioPlayerActivity.isPause) {
+                            if (AudioPlayerActivity.timer != null) {
+                                AudioPlayerActivity.timer.cancel();
+                            }
+                            if (BackgroundSoundService.mPlayer != null) {
+                                BackgroundSoundService.mPlayer.release();
+                                Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                                ((Activity) mContext).stopService(intent);
+                            }
+
+
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+
+
+
                     Intent intent = new Intent(mContext, AudioPlayerActivity.class);
                     Bundle bund = new Bundle();
                     bund.putParcelableArrayList("categories", itemsList);
@@ -115,16 +145,24 @@ public class SongsLikedAdapter extends RecyclerView.Adapter<SongsLikedAdapter.Si
                     bund.putInt("index", i);
                     bund.putString(AudioPlayerActivity.ALBUM_NAME, "");
                     bund.putString("from", "home");
+                    bund.putString("des", audio_itemsList.get(i).getColumns().getDescription());
+                    bund.putBoolean("isDeeplink", false);
                     intent.putExtras(bund);
+                    ComonHelper.notifFlag = false;
                     ((Activity) mContext).startActivity(intent);
                 } else if (typeId == 2) {
                     //video song
-                    if (AudioPlayerActivity.isPlaying) {
-                        AudioPlayerActivity.timer.cancel();
-                        BackgroundSoundService.mPlayer.release();
-                        Intent intent = new Intent(mContext, BackgroundSoundService.class);
-                        ((Activity) mContext).stopService(intent);
+                    try {
+                        if (AudioPlayerActivity.isPlaying) {
+                            AudioPlayerActivity.timer.cancel();
+                            BackgroundSoundService.mPlayer.release();
+                            Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                            ((Activity) mContext).stopService(intent);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
+
 
                     //video song
                     Intent intent = new Intent(mContext, VideoPlayerActivity.class);
@@ -134,7 +172,9 @@ public class SongsLikedAdapter extends RecyclerView.Adapter<SongsLikedAdapter.Si
                     b.putString("from", "home");
                     b.putString("album_name", "");
                     b.putInt("songId", itemsList.get(i).getColumns().getSongId());
+                    b.putString("des", video_itemsList.get(i).getColumns().getDescription());
                     b.putParcelableArrayList("specific_categories", video_itemsList);
+                    b.putBoolean("isDeeplink", false);
                     intent.putExtras(b);
                     Toast.makeText(mContext, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                     ((Activity) mContext).startActivity(intent);
@@ -166,6 +206,35 @@ public class SongsLikedAdapter extends RecyclerView.Adapter<SongsLikedAdapter.Si
                             case R.id.item1:
                                 if (typeId == 1) {
                                     //audio song
+                                    try {
+                                        if (ComonHelper.timer != null) {
+                                            ComonHelper.timer.cancel();
+                                        }
+                                        ComonHelper.pauseFlag = false;
+
+                                        if (AudioPlayerActivity.isPlaying) {
+                                            AudioPlayerActivity.timer.cancel();
+                                            BackgroundSoundService.mPlayer.release();
+                                            Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                                            ((Activity) mContext).stopService(intent);
+                                        } else if (AudioPlayerActivity.isPause) {
+                                            if (AudioPlayerActivity.timer != null) {
+                                                AudioPlayerActivity.timer.cancel();
+                                            }
+                                            if (BackgroundSoundService.mPlayer != null) {
+                                                BackgroundSoundService.mPlayer.release();
+                                                Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                                                ((Activity) mContext).stopService(intent);
+                                            }
+
+
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+
+
+
                                     Intent intent = new Intent(mContext, AudioPlayerActivity.class);
                                     Bundle bund = new Bundle();
                                     bund.putParcelableArrayList("categories", itemsList);
@@ -173,14 +242,22 @@ public class SongsLikedAdapter extends RecyclerView.Adapter<SongsLikedAdapter.Si
                                     bund.putInt("index", i);
                                     bund.putString(AudioPlayerActivity.ALBUM_NAME, "");
                                     bund.putString("from", "home");
+                                    bund.putBoolean("isDeeplink", false);
                                     intent.putExtras(bund);
+                                    ComonHelper.notifFlag = false;
+                                    ((Activity) mContext).startActivity(intent);
                                 } else if (typeId == 2) {
                                     //video song
-                                    if (AudioPlayerActivity.isPlaying) {
-                                        AudioPlayerActivity.timer.cancel();
-                                        BackgroundSoundService.mPlayer.release();
-                                        Intent intent = new Intent(mContext, BackgroundSoundService.class);
-                                        ((Activity) mContext).stopService(intent);
+                                    try {
+                                        if (AudioPlayerActivity.isPlaying) {
+                                            AudioPlayerActivity.timer.cancel();
+                                            BackgroundSoundService.mPlayer.release();
+                                            Intent intent = new Intent(mContext, BackgroundSoundService.class);
+                                            ((Activity) mContext).stopService(intent);
+                                        }
+
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
                                     }
 
                                     //video song
@@ -192,6 +269,7 @@ public class SongsLikedAdapter extends RecyclerView.Adapter<SongsLikedAdapter.Si
                                     b.putString("album_name", "");
                                     b.putInt("songId", itemsList.get(i).getColumns().getSongId());
                                     b.putParcelableArrayList("specific_categories", video_itemsList);
+                                    b.putBoolean("isDeeplink", false);
                                     intent.putExtras(b);
                                     Toast.makeText(mContext, "Pleasse wait we are preparing", Toast.LENGTH_LONG).show();
                                     mContext.startActivity(intent);

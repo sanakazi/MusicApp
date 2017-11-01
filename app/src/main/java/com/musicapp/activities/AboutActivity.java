@@ -37,7 +37,10 @@ import butterknife.ButterKnife;
 
 public class AboutActivity extends AppCompatActivity {
 
-    RelativeLayout bottomPlayerView; SeekBar seekView; TextView tvPlayName; ImageView ivUp;
+    public static RelativeLayout bottomPlayerView;
+    SeekBar seekView;
+    TextView tvPlayName;
+    ImageView ivUp;
     @Bind(R.id.toolbar)
     Toolbar toolbar;
 
@@ -61,26 +64,8 @@ public class AboutActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         getSupportActionBar().setTitle("About");
-        bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
-        ivBottomPlay=(ImageView) findViewById(R.id.ivBottomPlay);
-        seekView = (SeekBar)findViewById(R.id.seekView);
-        tvPlayName=(TextView) findViewById(R.id.tvPlayName);
-        ivUp=(ImageView) findViewById(R.id.ivUp);
+        events();
         setupViewAction();
-        if (AudioPlayerActivity.isPlaying) {
-            bottomPlayerView.setVisibility(View.VISIBLE);
-            ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, aboutActivity);
-        } else {
-            if (AudioPlayerActivity.isPause) {
-                bottomPlayerView.setVisibility(View.VISIBLE);
-                ivBottomPlay.setImageResource(R.drawable.pause_orange);
-                ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, aboutActivity);
-            } else {
-                bottomPlayerView.setVisibility(View.GONE);
-            }
-        }
         if (ComonHelper.checkConnection(aboutActivity)) {
 
             getData();
@@ -91,7 +76,62 @@ public class AboutActivity extends AppCompatActivity {
 
     }
 
+    public void events() {
+        bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
+        ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
+        seekView = (SeekBar) findViewById(R.id.seekView);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
+        ivUp = (ImageView) findViewById(R.id.ivUp);
 
+        if (AudioPlayerActivity.isPlaying) {
+            bottomPlayerView.setVisibility(View.VISIBLE);
+            ComonHelper comonHelper = new ComonHelper();
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, aboutActivity);
+        } else {
+            if (AudioPlayerActivity.isPause) {
+                bottomPlayerView.setVisibility(View.VISIBLE);
+                ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                ComonHelper comonHelper = new ComonHelper();
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, aboutActivity);
+            } else {
+                bottomPlayerView.setVisibility(View.GONE);
+            }
+        }
+
+        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, aboutActivity);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+
+    }
     private void setupViewAction() {
 
         rlTerm.setOnClickListener(new View.OnClickListener() {
@@ -117,27 +157,7 @@ public class AboutActivity extends AppCompatActivity {
                 startActivityForResult(i, 0);
             }
         });
-        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
 
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                BackgroundSoundService.mPlayer.seekTo(seekView.getProgress());
-                ComonHelper.timer.cancel();
-                ComonHelper.updateSeekProgressTimer(seekView, aboutActivity);
-                AudioPlayerActivity.timer.cancel();
-                AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
-                audioPlayerActivity.updateProgressBar();
-            }
-        });
     }
 
     @Override
@@ -209,4 +229,15 @@ public class AboutActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        events();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        events();
+    }
 }

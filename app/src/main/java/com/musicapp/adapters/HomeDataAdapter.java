@@ -33,6 +33,7 @@ public class HomeDataAdapter extends RecyclerView.Adapter<HomeDataAdapter.ItemRo
         this.mContext = context;
         this.audio_itemsList=audio_itemsList;
         this.video_itemsList=video_itemsList;
+        setHasStableIds(true); //changes by amol
 
     }
 
@@ -54,7 +55,7 @@ public class HomeDataAdapter extends RecyclerView.Adapter<HomeDataAdapter.ItemRo
 
         itemRowHolder.itemTitle.setText(sectionName);
 
-        HomeItemAdapter itemListDataAdapter = new HomeItemAdapter(mContext, dataList_parent.get(i).getDataList(),audio_itemsList,video_itemsList, dataList_parent.get(i).getCategoryId());
+        HomeItemAdapter itemListDataAdapter = new HomeItemAdapter(mContext, dataList_parent.get(i).getDataList(), audio_itemsList, video_itemsList, dataList_parent.get(i).getCategoryId(), dataList_parent.get(i).getCategoryName());
         if(!dataList_parent.get(i).getDataList().isEmpty())
         {
             itemRowHolder.recycler_view_list.setAdapter(itemListDataAdapter);
@@ -133,4 +134,8 @@ public class HomeDataAdapter extends RecyclerView.Adapter<HomeDataAdapter.ItemRo
 
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 }

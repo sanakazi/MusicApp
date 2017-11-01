@@ -6,11 +6,13 @@ import android.content.Intent;
 import android.graphics.Point;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Bundle;
 import android.view.Display;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -41,6 +43,15 @@ public class ComonHelper {
     static boolean duplicationIndex;
     static int duplicateArtistIndex;
     static int duplicateSongIndex;
+
+    //for bottom player
+    public static ArrayList<HomeDetailsJson.DataList> audio_itemsList = new ArrayList<>();
+    public static int position;
+    public static ArrayList<HomeDetailsJson.DataList> itemsList = new ArrayList<>();
+    public static boolean pauseFlag = false, notifFlag = false;
+    public static ImageView ivPlay;
+    public static TextView tvSongName;
+    public static String from, description, imageUrl, songName, albumName;
 
     public ComonHelper() {
     }
@@ -93,39 +104,84 @@ public class ComonHelper {
 
 
     //For Bottom audio player
-    public void bottomPlayerListner(SeekBar seekView, ImageView ivPlay, ImageView ivUp, final Context context) {
+    public void bottomPlayerListner(final SeekBar seekView, final ImageView ivPlay, ImageView ivUp, TextView tvSongName, final Context context) {
+        try {
+            seekView.setProgress(BackgroundSoundService.mPlayer.getCurrentPosition());
+            seekView.setMax(BackgroundSoundService.mPlayer.getDuration());
+            this.tvSongName = tvSongName;
+            System.out.println("SONG NAME" + songName);
+            tvSongName.setText(songName);
+            updateSeekProgressTimer(seekView, context);
+            this.ivPlay = ivPlay;
 
-        seekView.setProgress(BackgroundSoundService.mPlayer.getCurrentPosition());
-        seekView.setMax(BackgroundSoundService.mPlayer.getDuration());
-        updateSeekProgressTimer(seekView, context);
+
+            ivPlay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    if (AudioPlayerActivity.isPlaying) {
+                        Controls.pauseControl(context);
+                        BackgroundSoundService.mPlayer.pause();
+                        MainActivity.ivBottomPlay.setImageResource(R.drawable.pause_orange);
+                        AudioPlayerActivity.isPlaying = false;
+                        AudioPlayerActivity.isPause = true;
+                        if (timer != null) {
+                            timer.cancel();
+                            timer = null;
+                            if (AudioPlayerActivity.timer != null) {
+                                AudioPlayerActivity.timer.cancel();
+                                AudioPlayerActivity.timer = null;
+                            }
+                        }
+
+                        ivPlay.setImageResource(R.drawable.pause_orange);
 
 
-        ivPlay.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
+                    } else {
+                        Controls.playControl(context);
+                        BackgroundSoundService.mPlayer.start();
+                        MainActivity.ivBottomPlay.setImageResource(R.drawable.play_orange);
+                        AudioPlayerActivity.isPlaying = true;
+                        AudioPlayerActivity.isPause = false;
+                        AudioPlayerActivity.temp = true;
 
-                if (AudioPlayerActivity.isPlaying) {
-                    BackgroundSoundService.mPlayer.pause();
-                    MainActivity.ivBottomPlay.setImageResource(R.drawable.pause_orange);
-                    AudioPlayerActivity.isPlaying = false;
-                    AudioPlayerActivity.isPause = true;
-                } else {
-                    BackgroundSoundService.mPlayer.start();
-                    MainActivity.ivBottomPlay.setImageResource(R.drawable.play_orange);
-                    AudioPlayerActivity.isPlaying = true;
-                    AudioPlayerActivity.isPause = false;
+                        updateSeekProgressTimer(seekView, context);
+                        ivPlay.setImageResource(R.drawable.play_orange);
+
+
+                    }
+
+
                 }
+            });
+            ivUp.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    notifFlag = false;
+                    Intent intent = new Intent(context, AudioPlayerActivity.class);
+                    if (!from.matches("search")) {
+                        Bundle bund = new Bundle();
+                        bund.putParcelableArrayList("categories", itemsList);
+                        bund.putParcelableArrayList("specific_categories", audio_itemsList);
+                        bund.putInt("index", position);
+                        bund.putString(AudioPlayerActivity.ALBUM_NAME, albumName);
+                        bund.putString("from", "bottomPlayer");
+                        bund.putBoolean("isDeeplink", false);
+                        bund.putString("des", description);
+                        intent.putExtras(bund);
+                    } else {
+                        Bundle bund = new Bundle();
+                        bund.putString("from", "bottomPlayer");
+                        bund.putBoolean("isDeeplink", false);
+                        intent.putExtras(bund);
+                    }
+                    ((Activity) context).startActivity(intent);
+                }
+            });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-
-            }
-        });
-        ivUp.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(context, AudioPlayerActivity.class);
-                ((Activity) context).startActivity(i);
-            }
-        });
     }
 
 
@@ -136,7 +192,29 @@ public class ComonHelper {
             public void run() {
                 ((Activity) context).runOnUiThread(new Runnable() {
                     public void run() {
-                        seekBar.setProgress(BackgroundSoundService.mPlayer.getCurrentPosition());
+                        if (timer != null) {
+                            try {
+                                if (BackgroundSoundService.mPlayer != null) {
+                                    if (pauseFlag) {
+                                        if (BackgroundSoundService.mPlayer.isPlaying()) {
+                                            if (!BackgroundSoundService.isProcessChanging) {
+                                                try {
+                                                    seekBar.setProgress(BackgroundSoundService.mPlayer.getCurrentPosition());
+                                                } catch (Exception e) {
+                                                    e.printStackTrace();
+                                                }
+
+
+                                            }
+                                            tvSongName.setText(songName);
+                                        }
+                                    }
+                                }
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        }
                     }
                 });
             }

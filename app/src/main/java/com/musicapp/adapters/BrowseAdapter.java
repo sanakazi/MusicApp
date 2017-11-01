@@ -18,7 +18,7 @@ package com.musicapp.adapters;
         import com.musicapp.R;
 
         import com.musicapp.activities.BrowseItemListActivity;
-        import com.musicapp.pojos.HomeDetailsJson;
+        import com.musicapp.pojos.BrowseJson;
         import com.musicapp.singleton.MySingleton;
         import com.squareup.picasso.Picasso;
 
@@ -31,7 +31,7 @@ package com.musicapp.adapters;
 public class BrowseAdapter  extends RecyclerView.Adapter<BrowseAdapter.SingleItemRowHolder> {
 
 
-    private ArrayList<HomeDetailsJson.Categories> itemsList;
+    private ArrayList<BrowseJson.Categories> itemsList;
     private Context mContext;
     int category_Id;
     ArrayList<Integer> markFav;
@@ -39,12 +39,13 @@ public class BrowseAdapter  extends RecyclerView.Adapter<BrowseAdapter.SingleIte
     private static final String TAG=BrowseAdapter.class.getSimpleName();
 
 
-    public BrowseAdapter(Context context, ArrayList<HomeDetailsJson.Categories> itemsList ,int category_Id) {
+    public BrowseAdapter(Context context, ArrayList<BrowseJson.Categories> itemsList, int category_Id) {
         mImageLoader = MySingleton.getInstance(context).getImageLoader();
         this.itemsList = itemsList;
         this.mContext = context;
         this.category_Id=category_Id;
         this.markFav = markFav;
+        setHasStableIds(true);// changes by amol
 
     }
     @Override
@@ -60,7 +61,8 @@ public class BrowseAdapter  extends RecyclerView.Adapter<BrowseAdapter.SingleIte
 
         holder.tvTitle.setText(itemsList.get(i).getCategoryName());
         //  holder.itemImage.setImageUrl(itemsList.get(i).getCoverImage(), mImageLoader);
-      //  Picasso.with(mContext).load(itemsList.get(i).getCoverImage()).into(holder.itemImage);
+        if (itemsList.get(i).getCoverImage() != null)
+            Picasso.with(mContext).load(itemsList.get(i).getCoverImage()).into(holder.itemImage);
         holder.browse_category.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -101,4 +103,8 @@ public class BrowseAdapter  extends RecyclerView.Adapter<BrowseAdapter.SingleIte
 
     }
 
+    @Override
+    public long getItemId(int position) {
+        return position;
+    }
 }

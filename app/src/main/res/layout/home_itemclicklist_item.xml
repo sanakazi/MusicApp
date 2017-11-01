@@ -18,8 +18,8 @@
 
         <FrameLayout
             android:id="@+id/itemImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="110dp"
+            android:layout_height="110dp"
             android:layout_gravity="center_horizontal"
             android:scaleType="fitCenter"
             >
@@ -27,8 +27,8 @@
 
             <RelativeLayout
                 android:id="@+id/latest_song_img_backlay"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:layout_gravity="center_horizontal"
                 android:scaleType="fitCenter"
                 android:layout_below="@color/home_fragment_bg"
@@ -46,8 +46,8 @@
 
             <ImageView
                 android:id="@+id/itemImage"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
+                android:layout_width="110dp"
+                android:layout_height="110dp"
                 android:layout_gravity="center_horizontal"
                 android:scaleType="fitCenter"
                 />

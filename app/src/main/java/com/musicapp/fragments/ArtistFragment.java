@@ -33,7 +33,6 @@ import butterknife.ButterKnife;
  */
 public class ArtistFragment extends Fragment {
 
-
     int userId;
     String deviceId;
     private static final String TAG=ArtistFragment.class.getSimpleName();

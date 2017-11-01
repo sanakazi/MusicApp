@@ -1,5 +1,6 @@
 package com.musicapp.activities;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.PersistableBundle;
@@ -23,6 +24,7 @@ import com.facebook.login.LoginManager;
 import com.musicapp.R;
 import com.musicapp.others.ComonHelper;
 import com.musicapp.others.Utility;
+import com.musicapp.service.BackgroundSoundService;
 import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 import com.twitter.sdk.android.core.TwitterCore;
@@ -32,6 +34,9 @@ import org.json.JSONObject;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+
+import static com.musicapp.service.BackgroundSoundService.NOTIFICATION_ID;
+import static com.musicapp.service.BackgroundSoundService.notificationManager;
 
 public class SettingsActivity extends AppCompatActivity {
     @Bind(R.id.toolbar)
@@ -58,19 +63,18 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private void events()
-    {
+    private void events() {
         btn_account.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            Intent intent = new Intent(SettingsActivity.this, AccountActivity.class);
-            startActivity(intent);
-        }
-    });
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, AccountActivity.class);
+                startActivity(intent);
+            }
+        });
         btn_about.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent( SettingsActivity.this, AboutActivity.class);
+                Intent intent = new Intent(SettingsActivity.this, AboutActivity.class);
                 startActivity(intent);
             }
         });
@@ -79,12 +83,11 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
 
-                if (ComonHelper.checkConnection(SettingsActivity.this)){
+                if (ComonHelper.checkConnection(SettingsActivity.this)) {
                     performeLogout();
-                }else {
-                    Toast.makeText(SettingsActivity.this,getResources().getString(R.string.error_no_internet),Toast.LENGTH_LONG).show();
+                } else {
+                    Toast.makeText(SettingsActivity.this, getResources().getString(R.string.error_no_internet), Toast.LENGTH_LONG).show();
                 }
-
 
 
             }
@@ -92,7 +95,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
 
-    private void performeLogout(){
+    private void performeLogout() {
         hideKeyboard();
         progressBar.setVisibility(View.VISIBLE);
         JSONObject jsonParams = new JSONObject();
@@ -107,33 +110,55 @@ public class SettingsActivity extends AppCompatActivity {
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, Utility.logout, jsonParams,
                 new Response.Listener<JSONObject>() {
                     @Override
-                    public void onResponse(JSONObject response)
-
-                    {
+                    public void onResponse(JSONObject response) {
                         System.out.println("Volley submit param" + response.toString());
                         try {
                             String id = response.getString("id");
                             if (id.matches("1")) {
+                                if (notificationManager != null) {
+                                    notificationManager.cancel(NOTIFICATION_ID);
+                                }
 
-                                if(PreferencesManager.getInstance( SettingsActivity.this).isSocialLogin()==1) {
+                                if (ComonHelper.timer != null) {
+                                    ComonHelper.timer.cancel();
+                                }
+                                ComonHelper.pauseFlag = false;
+                                if (AudioPlayerActivity.isPlaying) {
+                                    AudioPlayerActivity.timer.cancel();
+                                    BackgroundSoundService.mPlayer.release();
+                                    Intent intent = new Intent(SettingsActivity.this, BackgroundSoundService.class);
+                                    stopService(intent);
+                                } else if (AudioPlayerActivity.isPause) {
+                                    if (AudioPlayerActivity.timer != null) {
+                                        AudioPlayerActivity.timer.cancel();
+                                    }
+                                    if (BackgroundSoundService.mPlayer != null) {
+                                        BackgroundSoundService.mPlayer.release();
+                                        Intent intent = new Intent(SettingsActivity.this, BackgroundSoundService.class);
+                                        stopService(intent);
+                                    }
+
+
+                                }
+                                if (PreferencesManager.getInstance(SettingsActivity.this).isSocialLogin() == 1) {
                                     FacebookSdk.sdkInitialize(getApplicationContext());
                                     LoginManager.getInstance().logOut();
                                     TwitterCore.getInstance().logOut();
                                 }
 
-                                PreferencesManager.getInstance( SettingsActivity.this).clearUserPreferences();
-                                if(!PreferencesManager.getInstance( SettingsActivity.this).isLoggedIn()) {
-                                    Intent intent = new Intent( SettingsActivity.this, AppIntroActivityNew.class);
+                                PreferencesManager.getInstance(SettingsActivity.this).clearUserPreferences();
+                                if (!PreferencesManager.getInstance(SettingsActivity.this).isLoggedIn()) {
+                                    Intent intent = new Intent(SettingsActivity.this, AppIntroActivityNew.class);
                                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                     startActivity(intent);
                                     SettingsActivity.this.finish();
                                 }
                                 Toast.makeText(SettingsActivity.this, response.getString("message"), Toast.LENGTH_LONG).show();
-                                Intent intent = new Intent(SettingsActivity.this,LoginActivity.class);
+                                Intent intent = new Intent(SettingsActivity.this, LoginActivity.class);
                                 startActivity(intent);
+                            } else {
+                                Toast.makeText(SettingsActivity.this, response.getString("message"), Toast.LENGTH_LONG).show();
                             }
-                            else
-                            { Toast.makeText(SettingsActivity.this, response.getString("message"), Toast.LENGTH_LONG).show();}
                             progressBar.setVisibility(View.GONE);
 
                         } catch (JSONException e) {
@@ -156,14 +181,15 @@ public class SettingsActivity extends AppCompatActivity {
                     }
                 });
         MySingleton.getInstance(SettingsActivity.this).getRequestQueue().add(request);
+
     }
 
     private void hideKeyboard() {
         // Check if no   has focus:
-        View v  = SettingsActivity.this.getCurrentFocus();
-        if ( v != null) {
-            InputMethodManager inputManager = (InputMethodManager)SettingsActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
-            inputManager.hideSoftInputFromWindow(v .getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        View v = SettingsActivity.this.getCurrentFocus();
+        if (v != null) {
+            InputMethodManager inputManager = (InputMethodManager) SettingsActivity.this.getSystemService(Context.INPUT_METHOD_SERVICE);
+            inputManager.hideSoftInputFromWindow(v.getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
         }
     }
 

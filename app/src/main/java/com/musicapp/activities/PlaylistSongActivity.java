@@ -46,6 +46,7 @@ import com.musicapp.others.Utility;
 import com.musicapp.pojos.HomeDetailsJson;
 import com.musicapp.pojos.PlaylistItem;
 import com.musicapp.pojos.PlaylistSongItem;
+import com.musicapp.service.BackgroundSoundService;
 import com.musicapp.singleton.MySingleton;
 import com.musicapp.singleton.PreferencesManager;
 
@@ -70,7 +71,7 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
     ArrayList <HomeDetailsJson.DataList> detail_categories_list;
     ArrayList <HomeDetailsJson.DataList> audio_detail_categories_list=new ArrayList<>();
     ArrayList <HomeDetailsJson.DataList> video_detail_categories_list=new ArrayList<>();
-    String playlistName;
+    String playlistName, playlistImageUrl;
     int userId,playlistId;
     String deviceId;
 
@@ -88,8 +89,9 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
 
     //for bottom player
     ImageView ivUp, ivBottomPlay;
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
+    TextView tvPlayName;
 
 
     //for create list popup
@@ -116,6 +118,7 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
         if (bundle!=null){
           playlistId=bundle.getInt("playlistId");
             playlistName=bundle.getString("playlistName");
+            playlistImageUrl = bundle.getString("playlistImage");
         }
         getSupportActionBar().setTitle(playlistName);
         System.out.println("DETAIL ON LIST"+playlistId+" "+playlistName);
@@ -196,7 +199,7 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
                 Bundle bundle=new Bundle();
                 bundle.putInt("playlistId",playlistId);
                 bundle.putString("playlistName",playlistName);
-                bundle.putString("thumbnail",coverImage);
+                bundle.putString("thumbnail", playlistImageUrl);
                 Intent i=new Intent(playlistSongActivity,PlaylistTakeOverActivity.class);
                 i.putExtras(bundle);
                 startActivity(i);
@@ -210,6 +213,7 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
         hideKeyboard();
        progressBar.setVisibility(View.VISIBLE);
        final String url=Utility.getsongPlaylist+"UserId="+userId+"&DeviceId="+deviceId+"&PlaylistId="+playlistId;
+        System.out.println("PLAYLIST SONGS LIST" + url);
       //  String url="http://boxofficecapsule.com:91/WebServices/UserServices.svc/GetSongsFromPlaylist?UserId=72&DeviceId=b7e3838559093ff3&PlaylistId=14";
         StringRequest request = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -250,13 +254,18 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
 
                                         for (int j = 0; j<detail_categories_list.size(); j++)
                                         {
-
                                             songName=detail_categories_list.get(0).getColumns().getSongName();
-                                            coverImage=detail_categories_list.get(0).getColumns().getCoverImage();
-
-                                            if (coverImage!=null || !coverImage.matches("")) {
-                                                backdrop.setImageUrl(coverImage, mImageLoader);
+                                            coverImage = detail_categories_list.get(0).getColumns().getThumbnailImage();
+                                            if (playlistImageUrl != null || !playlistImageUrl.matches("")) {
+                                                backdrop.setImageUrl(playlistImageUrl, mImageLoader);
+                                            } else {
+                                                if (coverImage != null || !coverImage.matches("")) {
+                                                    backdrop.setImageUrl(coverImage, mImageLoader);
+                                                    playlistImageUrl = coverImage;
+                                                }
                                             }
+
+
                                             if (detail_categories_list.get(j).getColumns().getSongTypeId() == 1) {
 
                                                 //audio list
@@ -328,21 +337,58 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
         bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
         seekView = (SeekBar) findViewById(R.id.seekView);
         ivUp = (ImageView) findViewById(R.id.ivUp);
+        tvPlayName = (TextView) findViewById(R.id.tvPlayName);
         ivBottomPlay = (ImageView) findViewById(R.id.ivBottomPlay);
         if (AudioPlayerActivity.isPlaying) {
             bottomPlayerView.setVisibility(View.VISIBLE);
             ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, playlistSongActivity);
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, playlistSongActivity);
         } else {
             if (AudioPlayerActivity.isPause) {
                 bottomPlayerView.setVisibility(View.VISIBLE);
                 ivBottomPlay.setImageResource(R.drawable.pause_orange);
                 ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, playlistSongActivity);
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, playlistSongActivity);
             } else {
                 bottomPlayerView.setVisibility(View.GONE);
             }
         }
+
+        seekView.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, PlaylistSongActivity.this);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+            }
+        });
+
+
+
     }
 
     private void hideKeyboard() {
@@ -398,8 +444,8 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
     }
 
     @Override
-    public void onSongLikeUnlike(int playlistId, String from, String songName, String albumName, String thumbnail, int songId, String like) {
-
+    public void onSongLikeUnlike(int playlistId, String from, String songName, String albumName, String thumbnail, int songId, String like, int songTypeId) {
+        System.out.println("THUMB NAIL IN PLAY SONG" + thumbnail);
         Bundle bundle = new Bundle();
         bundle.putInt("playlistId", playlistId);
         bundle.putString("from", from);
@@ -408,6 +454,7 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
         bundle.putString("thumbnail", thumbnail);
         bundle.putInt("songId", songId);
         bundle.putString("Like",like);
+        bundle.putInt("type", songTypeId);
         Intent i = new Intent(PlaylistSongActivity.this, SongTakeoverActivity.class);
         i.putExtras(bundle);
         startActivityForResult(i,1);
@@ -421,5 +468,18 @@ public class PlaylistSongActivity extends AppCompatActivity implements AppBarLay
         {
             getData();
         }
+    }
+
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        bottomPlayerListner();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomPlayerListner();
     }
 }

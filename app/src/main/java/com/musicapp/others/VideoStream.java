@@ -3,6 +3,7 @@ package com.musicapp.others;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.widget.SeekBar;
@@ -28,6 +29,7 @@ import com.musicapp.R;
 import com.musicapp.activities.AudioPlayerActivity;
 import com.musicapp.activities.VideoPlayerActivity;
 import com.musicapp.aes.AESHelper;
+import com.musicapp.encrypt.CryptLib;
 import com.squareup.picasso.Picasso;
 
 /**
@@ -50,14 +52,17 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     //  private TextView lblCurrentPosition = null;
     // private TextView lblDuration = null;
     public static Timer timer = null;
-/*boolean isCompleted=false;*/
+    /*boolean isCompleted=false;*/
+
+    //for encrypted text
+    CryptLib crypt;
 
     public VideoStream(Context ctx) {
         this.ctx = ctx;
 
         mPlayer = new MediaPlayer();
         mPlayer.setOnCompletionListener(this);
-        mPlayer.setOnPreparedListener(this);
+
         mPlayer.setOnBufferingUpdateListener(this);
 
         PowerManager powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
@@ -112,6 +117,8 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
 
         // Commit the layout parameters
         surfaceView.setLayoutParams(lp);
+        VideoPlayerActivity.progressBar.setVisibility(View.GONE);
+        VideoPlayerActivity.ivPlay.setClickable(true);
     }
 
     /**
@@ -137,23 +144,38 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     public void play() throws IllegalStateException, IOException {
         System.out.println("PLAYINGGGG" + STATUS + " " + STATUS_PLAYING + " " + STATUS_PAUSED + " " + STATUS_STOPED + " " + VideoPlayerActivity.index);
 
-        VideoPlayerActivity.progressBar.setVisibility(View.GONE);
-
         if (STATUS != STATUS_PLAYING) {
             wakeLockAcquire();
             System.out.println("PLAYINGGGG" + STATUS);
-            if (STATUS == STATUS_PAUSED)
+            if (STATUS == STATUS_PAUSED) {
                 if (mPlayer != null) {
+                    System.out.println("PLAYINGGGG" + STATUS);
                     mPlayer.start();
+                    VideoPlayerActivity.isPlaying = true;
                 } else {
                     System.out.println("PLAYINGGGG" + STATUS);
                     if (mPlayer != null) {
-                        mPlayer.prepare();
-                        mPlayer.start();
-                        VideoPlayerActivity.progressBar.setVisibility(View.GONE);
+                        mPlayer.prepareAsync();
+                        mPlayer.setScreenOnWhilePlaying(true);
+                        mPlayer.setOnPreparedListener(this);
+
+
                     }
 
                 }
+            } else {
+
+                if (mPlayer != null) {
+                    System.out.println("PLAYINGGGG IF ELSE" + STATUS);
+                    mPlayer.prepareAsync();
+                    mPlayer.setScreenOnWhilePlaying(true);
+                    mPlayer.setOnPreparedListener(this);
+                    System.out.println("PLAYINGGGG IF ELSE" + STATUS);
+                    // mPlayer.start();
+                    System.out.println("PLAYINGGGG IF ELSE" + STATUS);
+
+                }
+            }
 
             STATUS = STATUS_PLAYING;
         }
@@ -172,12 +194,21 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     public void setUpVideoFrom(String source) throws IllegalArgumentException, IllegalStateException, IOException {
         mPlayer.setAudioStreamType(AudioManager.STREAM_MUSIC);
         try {
-            source= AESHelper.decrypt("musicapp2017",source);
-            System.out.println("DATA URL"+source);
-        } catch (Exception e) {
-            e.printStackTrace();
+            crypt = new CryptLib();
+
+            String iv = "musicapp2017aurum";
+            String key = CryptLib.SHA256(iv, 32);
+
+            source = crypt.decrypt(
+                    TextUtils.htmlEncode(source), key, iv);
+
+            Log.e("Encrypted format : ", "Encrypted format : "
+                    + source);
+
+        } catch (Exception e1) {
+            e1.printStackTrace();
         }
-//		if (source.contains("http"))
+        System.out.println("PLAYING VIDEO URL" + source);
         Uri uri = Uri.parse(source);
         mPlayer.setDataSource(ctx, uri);
 
@@ -196,11 +227,13 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     public void release() {
         System.out.println("RELEASED CALLED");
         if (mPlayer != null) {
+            System.out.println("RELEASED CALLED IF");
             mPlayer.seekTo(0);
             mPlayer.release();
             mPlayer = null;
             STATUS = 0;
             if (!VideoPlayerActivity.isAnotherOptionScreen) {
+                System.out.println("RELEASED CALLED IF");
                 reset();
             }
         }
@@ -212,37 +245,19 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
      * Reset the seekbar.
      */
     private void reset() {
-        System.out.println("RESET CALLED");
-        System.out.println("IS CHANGED TRUEE RESET CALLED");
-        if (seekBar != null) {
-            seekBar.setProgress(0);
-            if (timer != null) {
-                timer.cancel();
-            }
-            VideoPlayerActivity.isReleased = true;
-            VideoPlayerActivity.isPlaying = false;
-            if (VideoPlayerActivity.isPotrait) {
-                VideoPlayerActivity.ivPlay.setImageResource(R.drawable.pause_video_vert);
-            } else {
-                VideoPlayerActivity.ivPlay.setImageResource(R.drawable.stop_video);
-            }
-            VideoPlayerActivity.tvStartTime.setText("00:00:00");
-            VideoPlayerActivity.tvDuration.setText("00:00:00");
-        }
-        if (VideoPlayerActivity.isUrlChange) {
-            System.out.println("IS CHANGED TRUEE");
-            try {
+
+        if (VideoPlayerActivity.detroyedTime != 0) {
+          /*  try {
                 VideoPlayerActivity.progressBar.setVisibility(View.VISIBLE);
 
                 mPlayer = new MediaPlayer();
+                VideoPlayerActivity.isFirstCall=true;
                 mPlayer.setOnCompletionListener(this);
                 setUpVideoFrom(VideoPlayerActivity.VideoURL);
-                mPlayer.setOnPreparedListener(this);
                 PowerManager powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
                 wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyMediaPlayer");
                 setSeekBar(VideoPlayerActivity.seekBarVideo);
                 setDisplay(VideoPlayerActivity.frameVideo, VideoPlayerActivity.sHolder);
-                //onPrepared(mPlayer);
                 play();
                 VideoPlayerActivity.isPlaying = true;
                 if (VideoPlayerActivity.isPotrait) {
@@ -258,66 +273,120 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
                 e.printStackTrace();
             } catch (IOException e) {
                 e.printStackTrace();
-            }
-
+            }*/
         } else {
 
 
-            try {
-                System.out.println("IS CHANGED FALSE");
+            System.out.println("RESET CALLED");
+            System.out.println("IS CHANGED TRUEE RESET CALLED");
+            if (seekBar != null) {
+                seekBar.setProgress(0);
+                if (timer != null) {
+                    timer.cancel();
+                }
+                VideoPlayerActivity.isReleased = true;
+                VideoPlayerActivity.isPlaying = false;
+                if (VideoPlayerActivity.isPotrait) {
+                    VideoPlayerActivity.ivPlay.setImageResource(R.drawable.pause_video_vert);
+                } else {
+                    VideoPlayerActivity.ivPlay.setImageResource(R.drawable.stop_video);
+                }
+                VideoPlayerActivity.tvStartTime.setText("00:00:00");
+                VideoPlayerActivity.tvDuration.setText("00:00:00");
+            }
+            if (VideoPlayerActivity.isUrlChange) {
+                System.out.println("IS CHANGED TRUEE");
+                try {
+                    VideoPlayerActivity.progressBar.setVisibility(View.VISIBLE);
+                    VideoPlayerActivity.ivPlay.setClickable(false);
 
-                VideoPlayerActivity.progressBar.setVisibility(View.VISIBLE);
-                int index = VideoPlayerActivity.index + 1;
-                VideoPlayerActivity.index = index;
-                if (VideoPlayerActivity.video_itemsList.size() != 0) {
-                    if (index != VideoPlayerActivity.video_itemsList.size()) {
-                        if (index < VideoPlayerActivity.video_itemsList.size()) {
-                            VideoPlayerActivity.VideoURL = VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongURL();
-                            VideoPlayerActivity.tvSong.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
-                            VideoPlayerActivity.latest_song_name_detail.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
-
-                            VideoPlayerActivity.tvDesSongName.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
-                            String url = VideoPlayerActivity.video_itemsList.get(index).getColumns().getThumbnailImage();
-                            if (!url.matches("") && url != null) {
-                                Picasso.with(ctx).load(url).into(VideoPlayerActivity.latest_song_img_detail);
-                                Picasso.with(ctx).load(url).into(VideoPlayerActivity.ivDesSongImage);
-                            }
-
-
-                            System.out.println("ELSE COMPLETE RESET" + VideoPlayerActivity.VideoURL + " " + index);
-                            mPlayer = new MediaPlayer();
-                            mPlayer.setOnCompletionListener(this);
-                            setUpVideoFrom(VideoPlayerActivity.VideoURL);
-
-                            mPlayer.setOnPreparedListener(this);
-                            PowerManager powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
-                            wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyMediaPlayer");
-                            setSeekBar(VideoPlayerActivity.seekBarVideo);
-                            setDisplay(VideoPlayerActivity.frameVideo, VideoPlayerActivity.sHolder);
-                            //onPrepared(mPlayer);
-                            play();
-                            VideoPlayerActivity.isPlaying = true;
-                            if (VideoPlayerActivity.isPotrait) {
-                                VideoPlayerActivity.ivPlay.setImageResource(R.drawable.play_video_vert);
-                            } else {
-                                VideoPlayerActivity.ivPlay.setImageResource(R.drawable.play_video);
-
-                            }
-                            VideoPlayerActivity.isUrlChange = false;
-                        }
+                    mPlayer = new MediaPlayer();
+                    mPlayer.setOnCompletionListener(this);
+                    setUpVideoFrom(VideoPlayerActivity.VideoURL);
+                    mPlayer.setOnPreparedListener(this);
+                    PowerManager powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+                    wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyMediaPlayer");
+                    setSeekBar(VideoPlayerActivity.seekBarVideo);
+                    setDisplay(VideoPlayerActivity.frameVideo, VideoPlayerActivity.sHolder);
+                    //onPrepared(mPlayer);
+                    play();
+                    VideoPlayerActivity.isPlaying = true;
+                    if (VideoPlayerActivity.isPotrait) {
+                        VideoPlayerActivity.ivPlay.setImageResource(R.drawable.play_video_vert);
+                    } else {
+                        VideoPlayerActivity.ivPlay.setImageResource(R.drawable.play_video);
 
                     }
+                    VideoPlayerActivity.isUrlChange = false;
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
+
+            } else {
+
+
+                try {
+                    System.out.println("IS CHANGED FALSE CLICKED");
+
+                    VideoPlayerActivity.progressBar.setVisibility(View.VISIBLE);
+                    VideoPlayerActivity.ivPlay.setClickable(false);
+                    int index = VideoPlayerActivity.index + 1;
+                    VideoPlayerActivity.index = index;
+                    if (VideoPlayerActivity.video_itemsList.size() != 0) {
+                        if (index != VideoPlayerActivity.video_itemsList.size()) {
+                            if (index < VideoPlayerActivity.video_itemsList.size()) {
+                                VideoPlayerActivity.VideoURL = VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongURL();
+                                VideoPlayerActivity.tvSong.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
+                                VideoPlayerActivity.latest_song_name_detail.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
+
+                                VideoPlayerActivity.tvDesSongName.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
+                                String url = VideoPlayerActivity.video_itemsList.get(index).getColumns().getThumbnailImage();
+                                if (!url.matches("") && url != null) {
+                                    Picasso.with(ctx).load(url).into(VideoPlayerActivity.latest_song_img_detail);
+                                    Picasso.with(ctx).load(url).into(VideoPlayerActivity.ivDesSongImage);
+                                }
+
+
+                                System.out.println("ELSE COMPLETE RESET" + VideoPlayerActivity.VideoURL + " " + index);
+                                mPlayer = new MediaPlayer();
+                                mPlayer.setOnCompletionListener(this);
+                                setUpVideoFrom(VideoPlayerActivity.VideoURL);
+
+                                mPlayer.setOnPreparedListener(this);
+                                PowerManager powerManager = (PowerManager) ctx.getSystemService(Context.POWER_SERVICE);
+                                wakeLock = powerManager.newWakeLock(PowerManager.FULL_WAKE_LOCK, "MyMediaPlayer");
+                                setSeekBar(VideoPlayerActivity.seekBarVideo);
+                                setDisplay(VideoPlayerActivity.frameVideo, VideoPlayerActivity.sHolder);
+                                //onPrepared(mPlayer);
+                                play();
+                                VideoPlayerActivity.isPlaying = true;
+                                if (VideoPlayerActivity.isPotrait) {
+                                    VideoPlayerActivity.ivPlay.setImageResource(R.drawable.play_video_vert);
+                                } else {
+                                    VideoPlayerActivity.ivPlay.setImageResource(R.drawable.play_video);
+
+                                }
+                                VideoPlayerActivity.isUrlChange = false;
+                            }
+
+                        }
+                    }
+                } catch (IllegalArgumentException e) {
+                    e.printStackTrace();
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
             }
-
-
         }
+
 
     }
 
@@ -355,9 +424,15 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
         //  this.lblDuration = lblDuration;
         System.out.println("SETTING SEEK BAr");
         seekBar.setOnSeekBarChangeListener(this);
-        seekBar.setProgress(0);
-        VideoPlayerActivity.tvStartTime.setText("00:00:00");
-        VideoPlayerActivity.tvDuration.setText("00:00:00");
+        if (VideoPlayerActivity.detroyedTime != 0) {
+            seekBar.setProgress(VideoPlayerActivity.detroyedTime);
+            VideoPlayerActivity.tvStartTime.setText(getDurationInSeconds(VideoPlayerActivity.detroyedTime));
+        } else {
+
+            seekBar.setProgress(0);
+            VideoPlayerActivity.tvStartTime.setText("00:00:00");
+            VideoPlayerActivity.tvDuration.setText("00:00:00");
+        }
     }
 
     /**
@@ -372,7 +447,7 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
         int hours = sec / 3600;
         int minutes = (sec / 60) - (hours * 60);
         int seconds = sec - (hours * 3600) - (minutes * 60);
-        String formatted = String.format("%d:%02d:%02d", hours, minutes, seconds);
+        String formatted = String.format("%02d:%02d:%02d", hours, minutes, seconds);
 
         return formatted;
     }
@@ -383,12 +458,16 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
      * @param progress - The seconds to seek the bar
      */
     private void setCurrentPosition(int progress) {
+        System.out.println("THE PROCESS" + getDurationInSeconds(progress));
         VideoPlayerActivity.tvStartTime.setText(getDurationInSeconds(progress));
     }
 
     public int getCurrentPosition() {
-
-        return mPlayer.getCurrentPosition();
+        int pos = 0;
+        if (mPlayer != null) {
+            pos = mPlayer.getCurrentPosition();
+        }
+        return pos;
     }
 
     public void setCurrentPositionToMplayer(int position) {
@@ -429,19 +508,23 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
             public void run() {
                 ((Activity) ctx).runOnUiThread(new Runnable() {
                     public void run() {
-                        try {
-                            if (mPlayer != null) {
-                                if (seekBar != null) {
-                                    seekBar.setProgress(mPlayer.getCurrentPosition());
-                                    setCurrentPosition(mPlayer.getCurrentPosition());
-                                    VideoPlayerActivity.tvStartTime.setText(getDurationInSeconds(mPlayer.getCurrentPosition()));
-                                    VideoPlayerActivity.progressBar.setVisibility(View.GONE);
-                                }
+                        if (timer != null) {
+                            try {
+                                if (mPlayer != null) {
+                                    if (VideoPlayerActivity.isPlaying) {
+                                        if (seekBar != null) {
+                                            seekBar.setProgress(mPlayer.getCurrentPosition());
+                                            setCurrentPosition(mPlayer.getCurrentPosition());
+                                            VideoPlayerActivity.tvStartTime.setText(getDurationInSeconds(mPlayer.getCurrentPosition()));
+                                        }
+                                    }
 
+                                }
+                            } catch (IllegalStateException e) {
+                                e.printStackTrace();
                             }
-                        } catch (IllegalStateException e) {
-                            e.printStackTrace();
                         }
+
 
                     }
                 });
@@ -452,10 +535,15 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     @Override
     public void onCompletion(MediaPlayer mp) {
 
+        if (!VideoPlayerActivity.tvStartTime.getText().toString().matches("00:00:00")) {
+            if (!VideoPlayerActivity.isAnotherOptionScreen) {
+                if (!VideoPlayerActivity.isFirstCall) {
+                    System.out.println("Complete listener called");
+                    release();
+                }
+                VideoPlayerActivity.isFirstCall = false;
+            }
 
-        if (!VideoPlayerActivity.isAnotherOptionScreen) {
-            System.out.println("Complete listener called");
-            release();
         }
 
 
@@ -522,39 +610,75 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     @Override
     public void onPrepared(MediaPlayer mp) {
 
-        VideoPlayerActivity.frameVideo.setBackgroundColor(Color.TRANSPARENT);
-
+        // VideoPlayerActivity.frameVideo.setBackgroundColor(Color.TRANSPARENT);
+        if (VideoPlayerActivity.detroyedTime != 0) {
+            mp.seekTo(VideoPlayerActivity.detroyedTime);
+        }
+        mp.start();
+        VideoPlayerActivity.isPlaying = true;
         if (seekBar != null) {
-            mPlayer.setOnSeekCompleteListener(this);
-
-            int duration = (int) mPlayer.getDuration();
+            mp.setOnSeekCompleteListener(this);
+            int duration = (int) mp.getDuration();
             seekBar.setMax(duration);
             VideoPlayerActivity.tvDuration.setText(getDurationInSeconds(duration));
 
-            VideoPlayerActivity.progressBar.setVisibility(View.GONE);
+
             System.out.println("PREPAREDDDD");
 
 
         }
-
+        mp.setOnInfoListener(new MediaPlayer.OnInfoListener() {
+            @Override
+            public boolean onInfo(MediaPlayer mp, int what, int extra) {
+                switch (what) {
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_START:
+                        VideoPlayerActivity.progressBar.setVisibility(View.VISIBLE);
+                        VideoPlayerActivity.ivPlay.setClickable(false);
+                        break;
+                    case MediaPlayer.MEDIA_INFO_BUFFERING_END:
+                        VideoPlayerActivity.progressBar.setVisibility(View.GONE);
+                        VideoPlayerActivity.ivPlay.setClickable(true);
+                        break;
+                }
+                return false;
+            }
+        });
         setUpVideoDimensions();
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         setCurrentPosition(progress);
-        //seekBar.setSecondaryProgress((progress+seekBar.getMax())/2);
-
+        // seekBar.setSecondaryProgress(mPlayer.getCurrentPosition()+5);
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        mPlayer.seekTo(seekBar.getProgress());
+
+        try {
+            if (timer != null) {
+                timer.cancel();
+                timer = null;
+            }
+            if (mPlayer != null) {
+                mPlayer.seekTo(seekBar.getProgress());
+            }
+            System.out.println("ON TRACKING" + mPlayer.isPlaying());
+            if (!VideoPlayerActivity.isPlaying) {
+                System.out.println("ON TRACKING" + VideoPlayerActivity.detroyedTime);
+                VideoPlayerActivity.detroyedTime = mPlayer.getCurrentPosition();
+                System.out.println("ON TRACKING" + VideoPlayerActivity.detroyedTime);
+            }
+            updateMediaProgress();
+        } catch (Exception e) {
+            System.out.println("ON TRACKING" + e.toString());
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -566,7 +690,10 @@ public class VideoStream implements MediaPlayer.OnCompletionListener, MediaPlaye
     @Override
     public void onBufferingUpdate(MediaPlayer mp, int percent) {
         System.out.println("UPDATION CALLED" + percent);
-        //  seekBar.setSecondaryProgress(percent+10);
+        // seekBar.setSecondaryProgress(mPlayer.getCurrentPosition()+5);
+        double ratio = percent / 100.0;
+        int bufferingLevel = (int) (mp.getDuration() * ratio);
 
+        seekBar.setSecondaryProgress(bufferingLevel);
     }
 }

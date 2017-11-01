@@ -169,11 +169,85 @@
         <View
             android:layout_width="match_parent"
             android:layout_height="1dp"
+            android:id="@+id/view3"
             android:background="@color/search_seperator"
             android:layout_below="@+id/lnrLikeSong"
             android:layout_marginTop="@dimen/dimen_5"></View>
 
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_below="@+id/view3"
+            android:id="@+id/lnrShare">
 
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".1"
+                android:id="@+id/ivShare"
+                android:src="@drawable/share" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".8"
+                android:padding="@dimen/dimen_5"
+                android:id="@+id/tvShare"
+                android:text="Share"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/txt_18" />
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:id="@+id/view4"
+            android:background="@color/search_seperator"
+            android:layout_below="@+id/lnrShare"
+            android:layout_marginTop="@dimen/dimen_5"></View>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:layout_below="@+id/view4"
+            android:id="@+id/lnrPost">
+
+            <ImageView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".1"
+                android:id="@+id/ivPost"
+                android:src="@drawable/post" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight=".8"
+                android:padding="@dimen/dimen_5"
+                android:id="@+id/tvPost"
+                android:text="Post"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/txt_18" />
+
+
+        </LinearLayout>
+
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/search_seperator"
+            android:layout_below="@+id/lnrLikeSong"
+            android:layout_marginTop="@dimen/dimen_5"></View>
 
 
     </RelativeLayout>

@@ -70,7 +70,7 @@ public class UserProfileActivity extends AppCompatActivity {
     private static String TAG = UserProfileActivity.class.getSimpleName();
     AppBarLayout appBarLayout;
     //for bottom player
-    RelativeLayout bottomPlayerView;
+    public static RelativeLayout bottomPlayerView;
     SeekBar seekView;
     TextView tvPlayName;
     ImageView ivUp;
@@ -84,9 +84,17 @@ public class UserProfileActivity extends AppCompatActivity {
         setContentView(R.layout.activity_user_profile);
         userProfileActivity = this;
         intialize();
+
+        Intent intent = getIntent();
+        uname = intent.getStringExtra("uname");
+        if (intent != null) {
+            String testing = intent.getStringExtra(Intent.EXTRA_TEXT);
+            System.out.println("TESTING DEPP LINK DATA" + testing);
+        }
+
         userId = PreferencesManager.getInstance(UserProfileActivity.this).getUserId();
         deviceId = PreferencesManager.getInstance(UserProfileActivity.this).getDeviceId();
-        getUserProfileDetailsWebService();
+        //   getUserProfileDetailsWebService();
         collapsingToolbarLayout.setExpandedTitleGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
         collapsingToolbarLayout.setTitle(uname);
     }
@@ -161,7 +169,7 @@ public class UserProfileActivity extends AppCompatActivity {
         }
     }
 
-    private void getUserProfileDetailsWebService() {
+ /*   private void getUserProfileDetailsWebService() {
 
         {
 
@@ -207,7 +215,7 @@ public class UserProfileActivity extends AppCompatActivity {
 
             MySingleton.getInstance(UserProfileActivity.this).getRequestQueue().add(stringRequest);
         }
-    }
+    }*/
 
     private void bottomPlayerListner() {
         bottomPlayerView = (RelativeLayout) findViewById(R.id.bottomPlayerView);
@@ -220,13 +228,13 @@ public class UserProfileActivity extends AppCompatActivity {
         if (AudioPlayerActivity.isPlaying) {
             bottomPlayerView.setVisibility(View.VISIBLE);
             ComonHelper comonHelper = new ComonHelper();
-            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, UserProfileActivity.this);
+            comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, UserProfileActivity.this);
         } else {
             if (AudioPlayerActivity.isPause) {
                 bottomPlayerView.setVisibility(View.VISIBLE);
                 ivBottomPlay.setImageResource(R.drawable.pause_orange);
                 ComonHelper comonHelper = new ComonHelper();
-                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, UserProfileActivity.this);
+                comonHelper.bottomPlayerListner(seekView, ivBottomPlay, ivUp, tvPlayName, UserProfileActivity.this);
             } else {
                 bottomPlayerView.setVisibility(View.GONE);
             }
@@ -246,12 +254,22 @@ public class UserProfileActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                BackgroundSoundService.mPlayer.seekTo(seekView.getProgress());
-                ComonHelper.timer.cancel();
-                ComonHelper.updateSeekProgressTimer(seekView, UserProfileActivity.this);
-                AudioPlayerActivity.timer.cancel();
-                AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
-                audioPlayerActivity.updateProgressBar();
+                try {
+                    if (ComonHelper.timer != null) {
+                        ComonHelper.timer.cancel();
+                        ComonHelper.timer = null;
+                    }
+                    BackgroundSoundService.mPlayer.seekTo(seekBar.getProgress());
+                    ComonHelper.updateSeekProgressTimer(seekBar, userProfileActivity);
+                    if (AudioPlayerActivity.timer != null) {
+                        AudioPlayerActivity.timer.cancel();
+                        AudioPlayerActivity.timer = null;
+                    }
+                    AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
+                    audioPlayerActivity.updateProgressBar();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         });
     }
@@ -265,5 +283,17 @@ public class UserProfileActivity extends AppCompatActivity {
                 break;
         }
         return true;
+    }
+
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        bottomPlayerListner();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        bottomPlayerListner();
     }
 }

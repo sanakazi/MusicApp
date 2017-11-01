@@ -1,10 +1,8 @@
 package com.musicapp.adapters;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v7.widget.CardView;
+import android.provider.CalendarContract;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,28 +13,26 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.android.volley.toolbox.ImageLoader;
-import com.google.gson.Gson;
+
 import com.musicapp.R;
-import com.musicapp.activities.AudioPlayerActivity;
-import com.musicapp.activities.HomeItemClickListActivity;
+
 import com.musicapp.activities.LiveStreamVideoActivity;
-import com.musicapp.activities.VideoPlayerActivity;
-import com.musicapp.fragments.LivestreamFragment;
-import com.musicapp.others.ComonHelper;
-import com.musicapp.pojos.HomeDetailsJson;
+
 import com.musicapp.pojos.LivestreamJson;
-import com.musicapp.service.BackgroundSoundService;
+
 import com.musicapp.singleton.MySingleton;
-import com.musicapp.singleton.PreferencesManager;
+
 import com.squareup.picasso.Picasso;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
 
 /**
  * Created by SanaKazi on 2/15/2017.
@@ -49,6 +45,7 @@ public class LivestreamAdapter extends RecyclerView.Adapter<LivestreamAdapter.Si
     int category_Id;
     private ImageLoader mImageLoader;
     private static final String TAG=LivestreamAdapter.class.getSimpleName();
+    long startTme;
 
 
 
@@ -67,8 +64,6 @@ public class LivestreamAdapter extends RecyclerView.Adapter<LivestreamAdapter.Si
 
     @Override
     public void onBindViewHolder(final SingleItemRowHolder holder, final int position) {
-
-
 
         holder.latest_song_name.setText(itemsList.get(position).getConcertTitle());
         holder.latest_song_details.setText(itemsList.get(position).getConcertDate().toString());
@@ -102,27 +97,29 @@ public class LivestreamAdapter extends RecyclerView.Adapter<LivestreamAdapter.Si
                     public boolean onMenuItemClick(MenuItem item) {
                         switch (item.getItemId()) {
                             case R.id.item1:
-                                long startTime=0,endTime=0;
 
-                                String startDate = "2011/09/01";
+                                Intent calIntent = new Intent(Intent.ACTION_INSERT);
+                                calIntent.setType("vnd.android.cursor.item/event");
+                                calIntent.putExtra(CalendarContract.Events.TITLE, itemsList.get(position).getConcertTitle());
+                                calIntent.putExtra(CalendarContract.Events.EVENT_LOCATION, itemsList.get(position).getLocation());
+                                calIntent.putExtra(CalendarContract.Events.DESCRIPTION, itemsList.get(position).getDescription());
+
+                                String date = itemsList.get(position).getConcertDate();
                                 try {
-                                    Date date = new SimpleDateFormat("yyyy-MM-dd").parse(startDate);
-                                    startTime=date.getTime();
+                                    Date sampleDate = new SimpleDateFormat("MM/dd/yyyy").parse(date);
+                                    startTme = sampleDate.getTime();
+                                } catch (ParseException e) {
+                                    e.printStackTrace();
                                 }
-                                catch(Exception e){ }
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_ALL_DAY, true);
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_BEGIN_TIME,
+                                        startTme);
+                                calIntent.putExtra(CalendarContract.EXTRA_EVENT_END_TIME,
+                                        startTme);
 
-                                Calendar cal = Calendar.getInstance();
-                                Intent intent = new Intent(Intent.ACTION_EDIT);
-                                intent.setType("vnd.android.cursor.item/event");
-                                intent.putExtra("beginTime",startTime);
-                                intent.putExtra("allDay", true);
-                                intent.putExtra("rrule", "FREQ=YEARLY");
-                                intent.putExtra("endTime", endTime);
-                                intent.putExtra("title", "A Test Event from android app");
-                                mContext.startActivity(intent);
+                                mContext.startActivity(calIntent);
 
                                 break;
-
                         }
                         return false;
                     }

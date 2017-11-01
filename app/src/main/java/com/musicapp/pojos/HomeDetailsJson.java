@@ -91,6 +91,9 @@ public class HomeDetailsJson {
         //region class DataList
         Columns columns;
 
+        public DataList() {
+
+        }
         protected DataList(Parcel in) {
             columns = in.readParcelable(Columns.class.getClassLoader());
         }
@@ -133,27 +136,9 @@ public class HomeDetailsJson {
         int MoodId,SongCount,SongId,SongTypeId,TypeId;
         String Like,CoverImage,Description,Origin,Producer,ReleaseDate,SongName,SongURL,ThumbnailImage,TypeName,SecondaryArtistId,ArtistId,GenreId;
 
-        protected Columns(Parcel in) {
-            ArtistId = in.readString();
-            GenreId = in.readString();
-            MoodId = in.readInt();
-            SongCount = in.readInt();
-            SongId = in.readInt();
-            SongTypeId = in.readInt();
-            TypeId = in.readInt();
-            CoverImage = in.readString();
-            Like=in.readString();
-            Description = in.readString();
-            Origin = in.readString();
-            Producer = in.readString();
-            ReleaseDate = in.readString();
-            SongName = in.readString();
-            SongURL = in.readString();
-            ThumbnailImage = in.readString();
-            TypeName = in.readString();
-            SecondaryArtistId = in.readString();
-        }
+        public Columns() {
 
+        }
         public static final Creator<Columns> CREATOR = new Creator<Columns>() {
             @Override
             public Columns createFromParcel(Parcel in) {
@@ -315,9 +300,74 @@ public class HomeDetailsJson {
             return 0;
         }
 
+
+        protected Columns(Parcel in) {
+
+            MoodId = in.readInt();
+            SongCount = in.readInt();
+            SongId = in.readInt();
+            SongTypeId = in.readInt();
+            TypeId = in.readInt();
+            Like = in.readString();
+            CoverImage = in.readString();
+            Description = in.readString();
+            Origin = in.readString();
+            Producer = in.readString();
+            ReleaseDate = in.readString();
+            SongName = in.readString();
+            SongURL = in.readString();
+            ThumbnailImage = in.readString();
+            TypeName = in.readString();
+            SecondaryArtistId = in.readString();
+            ArtistId = in.readString();
+            GenreId = in.readString();
+
+
+
+           /* ArtistId = in.readString();
+            GenreId = in.readString();
+            MoodId = in.readInt();
+            SongCount = in.readInt();
+            SongId = in.readInt();
+            SongTypeId = in.readInt();
+            TypeId = in.readInt();
+            CoverImage = in.readString();
+            Like=in.readString();
+            Description = in.readString();
+            Origin = in.readString();
+            Producer = in.readString();
+            ReleaseDate = in.readString();
+            SongName = in.readString();
+            SongURL = in.readString();
+            ThumbnailImage = in.readString();
+            TypeName = in.readString();
+            SecondaryArtistId = in.readString();*/
+        }
+
         @Override
         public void writeToParcel(Parcel dest, int flags) {
+
+
+            dest.writeInt(MoodId);
+            dest.writeInt(SongCount);
+            dest.writeInt(SongId);
+            dest.writeInt(SongTypeId);
+            dest.writeInt(TypeId);
+            dest.writeString(Like);
+            dest.writeString(CoverImage);
+            dest.writeString(Description);
+            dest.writeString(Origin);
+            dest.writeString(Producer);
+            dest.writeString(ReleaseDate);
+            dest.writeString(SongName);
+            dest.writeString(SongURL);
+            dest.writeString(ThumbnailImage);
+            dest.writeString(TypeName);
+            dest.writeString(SecondaryArtistId);
             dest.writeString(ArtistId);
+            dest.writeString(GenreId);
+
+          /*  dest.writeString(ArtistId);
             dest.writeString(GenreId);
             dest.writeInt(MoodId);
             dest.writeInt(SongCount);
@@ -334,7 +384,7 @@ public class HomeDetailsJson {
             dest.writeString(SongURL);
             dest.writeString(ThumbnailImage);
             dest.writeString(TypeName);
-            dest.writeString(SecondaryArtistId);
+            dest.writeString(SecondaryArtistId);*/
         }
     }
 

@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/home_fragment_bg">
+
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
@@ -36,6 +37,8 @@
                 android:textColorHint="@android:color/white"
                 android:textSize="20sp"
                 android:textColor="@android:color/white"
+                android:singleLine="true"
+                android:imeOptions="actionSearch"
                 android:background="@android:color/transparent" />
             <ImageView
                 android:layout_width="0dp"
@@ -49,8 +52,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_height="match_parent"
+        android:layout_above="@+id/lnrBottom"
+        android:layout_below="@+id/toolbar">
         <RelativeLayout
             android:padding="5dp"
             android:id="@+id/main_layout"
@@ -100,6 +104,40 @@
                     android:textStyle="bold" />
             </LinearLayout>
 
+            <LinearLayout
+                android:visibility="gone"
+                android:layout_centerVertical="true"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:id="@+id/lnrNoSearch"
+                android:orientation="vertical">
+
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:src="@drawable/search_music_app" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:visibility="gone"
+                    android:text="@string/txt_search_music"
+                    android:textColor="@android:color/white"
+                    android:textSize="@dimen/txt_25"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="No results found"
+                    android:textColor="@color/text_color_find"
+                    android:textSize="@dimen/txt_18"
+                    android:textStyle="bold" />
+            </LinearLayout>
+
 
         </RelativeLayout>
 
@@ -116,5 +154,12 @@
     </FrameLayout>
 
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/lnrBottom">
 
-</LinearLayout>
+        <include layout="@layout/ongoing_player_view" />
+    </LinearLayout>
+</RelativeLayout>

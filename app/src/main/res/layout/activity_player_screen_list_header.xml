@@ -29,7 +29,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Album"
+                android:text=""
+                android:visibility="gone"
                 android:textSize="15sp"
                 android:textColor="@color/white"/>
 
@@ -39,7 +40,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:textColor="@color/white"
-                android:text="Colonial Cousins"
+                android:text=""
                 android:textSize="20sp"/>
         </LinearLayout>
 

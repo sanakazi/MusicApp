@@ -2,13 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/home_fragment_bg">
+    android:background="@color/home_fragment_bg"
+    android:gravity="center">
 
 
-    <ScrollView
+    <ProgressBar
+        android:visibility="gone"
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:indeterminateDrawable="@drawable/customize_progress"
+        android:layout_gravity="center" />
+
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/nestedView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
+        android:layout_height="match_parent"
+        android:visibility="gone">
 
         <LinearLayout
             android:id="@+id/main_layout"
@@ -43,7 +54,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:text="Profile"
                     android:layout_alignBaseline="@+id/profile_icon"/>
 
@@ -81,7 +92,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:text="Playlists"
                     android:layout_alignBaseline="@+id/menu_icon"/>
 
@@ -119,7 +130,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:text="Songs"/>
 
 
@@ -156,7 +167,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:text="Artists"/>
 
 
@@ -193,7 +204,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:text="Genre"/>
 
 
@@ -230,12 +241,49 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:textColor="@color/white"
-                    android:textSize="20sp"
+                    android:textSize="15sp"
                     android:text="Settings"/>
 
 
             </RelativeLayout>
 
+            <View
+                android:layout_marginTop="10dp"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:minHeight="1dp"
+                android:background="#333333" />
+
+            <RelativeLayout
+                android:id="@+id/btn_share"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="@dimen/dimen_10"
+                android:layout_marginLeft="@dimen/dimen_10"
+                android:layout_marginRight="@dimen/dimen_10"
+                android:layout_gravity="center">
+
+                <ImageView
+                    android:layout_marginTop="3dp"
+                    android:id="@+id/share_icon"
+                    android:layout_width="20dp"
+                    android:layout_height="20dp"
+                    android:src="@drawable/share"
+                    android:layout_alignParentLeft="true" />
+
+                <TextView
+
+                    android:layout_marginLeft="15dp"
+                    android:layout_toRightOf="@+id/share_icon"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/white"
+                    android:textSize="15sp"
+                    android:text="Share" />
+
+
+            </RelativeLayout>
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
@@ -248,18 +296,19 @@
                     android:text="Recently Played"
                     android:textColor="@android:color/white"
                     android:layout_margin="@dimen/dimen_10"
-                    android:textSize="@dimen/txt_20"/>
+                    android:textSize="@dimen/txt_15" />
                 <android.support.v7.widget.RecyclerView
                     android:id="@+id/rvRecentlyPlayed"
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"/>
+                    android:layout_height="match_parent"
+                    android:nestedScrollingEnabled="false" />
 
             </LinearLayout>
 
 
         </LinearLayout>
 
-    </ScrollView>
+    </android.support.v4.widget.NestedScrollView>
 
 
 </LinearLayout>

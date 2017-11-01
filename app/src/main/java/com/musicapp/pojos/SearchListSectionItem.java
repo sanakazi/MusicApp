@@ -5,7 +5,7 @@ package com.musicapp.pojos;
  */
 
 public class SearchListSectionItem {
-    public String SongTypeId;
+    public int SongTypeId;
     public String songUrl;
     public String ThumbnailImage;
     public String id;
@@ -15,7 +15,7 @@ public class SearchListSectionItem {
     public String Description;
     public String Like;
 
-    public void setSongTypeId(String songTypeId) {
+    public void setSongTypeId(int songTypeId) {
         SongTypeId = songTypeId;
     }
 
@@ -51,7 +51,7 @@ public class SearchListSectionItem {
         Like = like;
     }
 
-    public String getSongTypeId() {
+    public int getSongTypeId() {
         return SongTypeId;
     }
 

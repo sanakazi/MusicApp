@@ -22,10 +22,12 @@
             app:layout_scrollFlags="scroll|exitUntilCollapsed"
             android:fitsSystemWindows="true"
             app:contentScrim="@color/purple"
-            app:expandedTitleMarginStart="48dp"
-            app:expandedTitleMarginEnd="64dp">
 
-<!--            app:contentScrim="?attr/colorPrimary"-->
+            app:expandedTitleMarginEnd="64dp"
+            app:expandedTitleTextAppearance="@style/TextAppearance.AppCompat.Headline">
+
+            <!--       app:expandedTitleMarginStart="5dp"
+            app:contentScrim="?attr/colorPrimary"-->
 
             <ImageView
                 android:id="@+id/backdrop"
@@ -89,9 +91,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
-        android:visibility="gone"
+
         >
 
-        <include layout="@layout/bottom_music_player" />
+        <include layout="@layout/ongoing_player_view" />
     </LinearLayout>
+
 </android.support.design.widget.CoordinatorLayout>

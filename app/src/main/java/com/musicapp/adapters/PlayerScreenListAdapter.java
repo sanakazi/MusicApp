@@ -24,7 +24,8 @@ import java.util.ArrayList;
  */
 public class PlayerScreenListAdapter extends RecyclerView.Adapter<PlayerScreenListAdapter.SingleItemRowHolder> {
 
-    private ArrayList<HomeDetailsJson.DataList> itemsList;
+    private ArrayList<HomeDetailsJson.DataList> itemsList = new ArrayList<>();
+    private ArrayList<HomeDetailsJson.DataList> tempList = new ArrayList<>();
     private Context mContext;
     int playingIndex;
 
@@ -32,7 +33,9 @@ public class PlayerScreenListAdapter extends RecyclerView.Adapter<PlayerScreenLi
         this.itemsList = itemsList;
         this.mContext = context;
         this.playingIndex = playingIndex;
-        itemsList.remove(playingIndex);
+        tempList = new ArrayList<>();
+        tempList.addAll(itemsList);
+        tempList.remove(playingIndex);
     }
 
     @Override
@@ -45,29 +48,13 @@ public class PlayerScreenListAdapter extends RecyclerView.Adapter<PlayerScreenLi
     @Override
     public void onBindViewHolder(SingleItemRowHolder holder, final int i) {
 
+        holder.latest_song_name.setText(tempList.get(i).getColumns().getSongName());
 
-      /*  if (i == playingIndex) {
-            itemsList.remove(i);
-            if (itemsList.size() != 0) {
-                holder.latest_song_name.setText(itemsList.get(i).getColumns().getSongName());
-            }else {
-                PlayerScreenListActivity.tvLabelNext.setVisibility(View.GONE);
-            }
-        } else {*/
-            holder.latest_song_name.setText(itemsList.get(i).getColumns().getSongName());
-       /* }*/
-
-       /* Glide.with(mContext)
-                .load(feedItem.getImageURL())
-                .diskCacheStrategy(DiskCacheStrategy.ALL)
-                .centerCrop()
-                .error(R.drawable.bg)
-                .into(feedListRowHolder.thumbView);*/
     }
 
     @Override
     public int getItemCount() {
-        return (null != itemsList ? itemsList.size() : 0);
+        return (null != tempList ? tempList.size() : 0);
     }
 
     public class SingleItemRowHolder extends RecyclerView.ViewHolder {
@@ -88,10 +75,11 @@ public class PlayerScreenListAdapter extends RecyclerView.Adapter<PlayerScreenLi
                 @Override
                 public void onClick(View v) {
                     int position =getPosition();
-                    int songId = itemsList.get(position).getColumns().getSongId();
+                    int songId = tempList.get(position).getColumns().getSongId();
                     System.out.println("TYPE ID NAME" + songId);
 
                     int index = getIndexByProperty(songId);
+                    System.out.println("TYPE ID NAME" + index);
                     AudioPlayerActivity.index=index;
                     if (AudioPlayerActivity.isPlaying = true) {
                         AudioPlayerActivity audioPlayerActivity = new AudioPlayerActivity();
@@ -108,8 +96,8 @@ public class PlayerScreenListAdapter extends RecyclerView.Adapter<PlayerScreenLi
     }
 
     private int getIndexByProperty(int yourSongId) {
-        for (int i = 0; i < AudioPlayerActivity.audio_itemsList.size(); i++) {
-            int songId = AudioPlayerActivity.audio_itemsList.get(i).getColumns().getSongId();
+        for (int i = 0; i < itemsList.size(); i++) {
+            int songId = itemsList.get(i).getColumns().getSongId();
 
             if (songId == yourSongId) {
 

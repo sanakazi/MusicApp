@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/ivDesSongImage"
-            android:background="@android:color/transparent"
+            android:background="@color/home_fragment_bg"
             android:layout_marginTop="@dimen/dimen_20"></WebView>
 
         <LinearLayout

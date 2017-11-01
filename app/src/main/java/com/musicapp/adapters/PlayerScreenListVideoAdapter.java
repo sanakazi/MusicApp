@@ -51,16 +51,8 @@ public class PlayerScreenListVideoAdapter extends RecyclerView.Adapter<PlayerScr
     @Override
     public void onBindViewHolder(SingleItemRowHolder holder, final int i) {
 
-
-      /*  if (i == playingIndex) {
-            if (itemsList.size() != 0) {
-                holder.latest_song_name.setText(itemsList.get(i).getColumns().getSongName());
-            } else {
-                VideoPlayerActivity.tvLabelNext.setVisibility(View.GONE);
-            }
-        } else {*/
         holder.latest_song_name.setText(tempList.get(i).getColumns().getSongName());
-        /*}*/
+
     }
 
     @Override
@@ -109,6 +101,8 @@ public class PlayerScreenListVideoAdapter extends RecyclerView.Adapter<PlayerScr
                             VideoPlayerActivity.tvSong.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
                             VideoPlayerActivity.latest_song_name_detail.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
                             VideoPlayerActivity.tvDesSongName.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
+                            VideoPlayerActivity.isAnotherOptionScreen = false;
+                            VideoPlayerActivity.detroyedTime = 0;
                             String url = VideoPlayerActivity.video_itemsList.get(index).getColumns().getThumbnailImage();
                             if (!url.matches("") && url != null) {
                                 Picasso.with(context).load(url).into(VideoPlayerActivity.latest_song_img_detail);
@@ -125,42 +119,6 @@ public class PlayerScreenListVideoAdapter extends RecyclerView.Adapter<PlayerScr
 
 
         }
-
-      /*  @Override
-        public void onClick(View v) {
-
-            int position=getPosition();
-
-            Toast.makeText(((Activity) context),"Please wait we are preparing",Toast.LENGTH_LONG).show();
-            int songId = itemsList.get(position).getColumns().getSongId();
-            System.out.println("Adapter song id of selected pos" + songId+" "+position);
-            int index = getIndexByProperty(songId);
-            System.out.println("Adapter got index" + index);
-            VideoPlayerActivity.index = index;
-            VideoPlayerActivity.rlDetailView.setVisibility(View.GONE);
-            VideoPlayerActivity.rlPlayerView.setVisibility(View.VISIBLE);
-            VideoPlayerActivity.isPlayerView = true;
-            if (VideoPlayerActivity.video_itemsList.size() != 0) {
-                System.out.println("NEXTTTT when size not zero");
-                if (index != VideoPlayerActivity.video_itemsList.size() - 1) {
-
-                    VideoPlayerActivity.isUrlChange = true;
-                   // index = index + 1;
-                    VideoPlayerActivity.VideoURL = VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongURL();
-                    Picasso.with(context).load(VideoPlayerActivity.video_itemsList.get(index).getColumns().getThumbnailImage());
-                    VideoPlayerActivity.tvSong.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
-                    VideoPlayerActivity.latest_song_name_detail.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
-                    VideoPlayerActivity.tvDesSongName.setText(VideoPlayerActivity.video_itemsList.get(index).getColumns().getSongName());
-                    String url = VideoPlayerActivity.video_itemsList.get(index).getColumns().getThumbnailImage();
-                    if (!url.matches("") && url != null) {
-                        Picasso.with(context).load(url).into(VideoPlayerActivity.latest_song_img_detail);
-                        Picasso.with(context).load(url).into(VideoPlayerActivity.ivDesSongImage);
-                    }
-
-                    VideoPlayerActivity.player.release();
-                }
-            }
-        }*/
     }
 
     private int getIndexByProperty(int yourSongId) {

@@ -66,6 +66,7 @@ public class RvPlaylistAdapter extends RecyclerView.Adapter<RvPlaylistAdapter.Pe
             Bundle bundle=new Bundle();
             bundle.putInt("playlistId",playList.get(position).getPlaylistId());
             bundle.putString("playlistName",playList.get(position).getPlaylistName());
+            bundle.putString("playlistImage", playList.get(position).getImageUrl());
             Intent i = new Intent(context, PlaylistSongActivity.class);
             i.putExtras(bundle);
             context.startActivity(i);
@@ -117,7 +118,7 @@ public class RvPlaylistAdapter extends RecyclerView.Adapter<RvPlaylistAdapter.Pe
             @Override
             public void onClick(View v) {
 
-                playlistTakeoverListener.onPlayListTakeoverClick(current.getPlaylistId(),current.getPlaylistName(),"");
+                playlistTakeoverListener.onPlayListTakeoverClick(current.getPlaylistId(), current.getPlaylistName(), current.getImageUrl());
 
             }
         });
